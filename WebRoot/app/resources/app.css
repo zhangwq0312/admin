@@ -1,0 +1,119 @@
+.user{  
+	background-image: url(icons/user.gif)!important;  
+}
+.password{  
+	background-image: url(icons/password.png)!important;  
+}
+.ok{  
+	background-image: url(icons/ok.gif)!important;  
+}
+.error{  
+	background-image: url(icons/error.gif)!important;  
+}
+.warn{  
+	background-image: url(icons/warn.gif)!important;  
+}
+.ask{  
+	background-image: url(icons/ask.gif)!important;  
+}
+.gouwuche{  
+	background-image: url(icons/gouwuche.png)!important;  
+}
+.add{  
+	background-image: url(icons/add.gif)!important;  
+}
+
+.copy{  
+	background-image: url(icons/copy.gif)!important;  
+}
+
+.edit{  
+	background-image: url(icons/edit.gif)!important;  
+}
+
+.set{  
+	background-image: url(icons/set.gif)!important;  
+}
+
+.delete{  
+	background-image: url(icons/delete.gif)!important;  
+}
+
+.preview{
+	background-image: url(icons/preview.gif)!important;
+}
+
+.info{  
+	background-image: url(icons/info.gif)!important;  
+}
+
+.bind{  
+	background-image: url(icons/bind.gif)!important;  
+}
+
+.edit_sort{  
+	background-image: url(icons/edit_sort.gif)!important;  
+}
+
+.move_up{  
+	background-image: url(icons/page-prev.gif)!important;
+	-moz-transform:rotate(90deg);
+	-webkit-transform:rotate(90deg);
+	-o-transform:rotate(90deg);
+	transform:rotate(90deg); 
+	filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.move_down{  
+	background-image: url(icons/page-next.gif)!important;
+	-moz-transform:rotate(90deg);
+	-webkit-transform:rotate(90deg);
+	-o-transform:rotate(90deg);
+	transform:rotate(90deg); 
+	filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.move_up_first{  
+	background-image: url(icons/page-first.gif)!important;
+	-moz-transform:rotate(90deg);
+	-webkit-transform:rotate(90deg);
+	-o-transform:rotate(90deg);
+	transform:rotate(90deg); 
+	filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.move_down_last{  
+	background-image: url(icons/page-last.gif)!important;
+	-moz-transform:rotate(90deg);
+	-webkit-transform:rotate(90deg);
+	-o-transform:rotate(90deg);
+	transform:rotate(90deg); 
+	filter:progid:DXImageTransform.Microsoft.BasicImage(rotation=1);
+}
+
+.header_title_center{
+	text-align:center;
+}
+
+.row_invalid { background: #cccccc; }
+
+.dlb_img_div_css {
+	/*非IE内核*/
+	display:table-cell;
+	vertical-align:middle;
+	/*IEneihe*/     
+	*display:block;      
+	*font-size:175px;
+	/*高度为200PX，  则200*0.873约为175px*/           
+	text-align:center;     
+	width:200px;     
+	height:200px;
+}
+
+.dlb_img_img_css {
+	vertical-align:middle;/*之前的是图片上下左右居中。后面的是处理等比例缩放的*/ 
+	max-width:200px; 
+	width:expression(this.width > 200 ? "200px" : this.width); 
+	max-height:200px;  
+	height:expression(this.height > 200 ? "200px" : this.height);
+}

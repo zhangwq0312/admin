@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 用于初始化 -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+  http://www.springframework.org/schema/beans 
+  http://www.springframework.org/schema/beans/spring-beans-2.5.xsd"
+	default-autowire="byName">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>/WEB-INF/*.properties</value>
+			</list>
+		</property>
+	</bean>
+
+	<import resource="shengxi-dao.xml" />
+	<import resource="shengxi-servlet.xml" />
+	<bean id="init" class="tools.InitManager">
+		<!-- 用于存放图片路径 -->
+		<property name="rootLocalPath" value="${rootLocalPath}" />
+	</bean>
+</beans>
