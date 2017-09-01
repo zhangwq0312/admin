@@ -55,7 +55,7 @@ public class UserDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 	
 	@SuppressWarnings("unchecked")
 	public User findByTel(String tel) {
-		String sql = "select * from t_user where tel='"+tel+"'";
+		String sql = "select * from t_user where tel='"+tel+"' limit 1";
 		List<User> list = getJdbcTemplate().query(sql, new BeanPropertyRowMapper(User.class));
 		
 		if(list != null&&list.size()>0) {

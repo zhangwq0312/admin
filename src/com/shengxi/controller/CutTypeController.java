@@ -223,12 +223,12 @@ public class CutTypeController extends MultiActionController {
 		colJson.put("type", cutType.getType());
 		colJson.put("unit_contain_weeks", cutType.getUnit_contain_weeks());
 		String unit_name= "";
-		if("hunlian".equals(cutType.getType())){
+		if("marriage_valid".equals(cutType.getType())){
 			unit_name=cutType.getUnit_contain_weeks()+"次";
-		}else if ("shangpu".equals(cutType.getType())){
+		}else if ("company_valid".equals(cutType.getType())){
 			unit_name=cutType.getUnit_contain_weeks()+"个月";
-		}else if ("flush".equals(cutType.getType())){
-			unit_name=cutType.getUnit_contain_weeks()+"条/月";
+		}else if ("post_flush".equals(cutType.getType())){
+			unit_name=cutType.getUnit_contain_weeks()+"天";
 		}
 		colJson.put("unit_name", unit_name);
 		colJson.put("unit_price", cutType.getUnit_price());

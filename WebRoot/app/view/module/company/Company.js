@@ -1,25 +1,25 @@
-Ext.define('app.view.module.post.Post', {
+Ext.define('app.view.module.company.Company', {
 	extend: 'Ext.grid.Panel',
 	requires: [
-       'app.view.module.post.PostController',
-       'app.view.module.post.PostModel'
+       'app.view.module.company.Controller',
+       'app.view.module.company.Model'
     ],
     
-    uses: ['app.view.module.post.PostToolbar'],
+    uses: ['app.view.module.company.Toolbar'],
     
-	alias: 'widget.post',
+	alias: 'widget.company',
 	
 	title: '栏目管理',
-	controller: 'post',
+	controller: 'company',
     viewModel: {
-        type: 'post'
+        type: 'company'
     },
 	
 	frame: false,
     columnLines: true,
     
     dockedItems: [{
-        xtype: 'post-toolbar',
+        xtype: 'company_toolbar',
         dock: 'top'
     }],
 	
@@ -28,7 +28,7 @@ Ext.define('app.view.module.post.Post', {
 		var mainViewModel = this.up('app-main').getViewModel();
 		this.getController().mainViewModel = mainViewModel;
 		
-		var store = Ext.create('app.store.PostStore');
+		var store = Ext.create('app.store.CompanyStore');
 		
 		var pageSize = store.getPageSize();
 		Ext.apply(this, {
@@ -50,76 +50,53 @@ Ext.define('app.view.module.post.Post', {
 	
 	columns: [{
 		locked: true,
-		header: '电话',
-		dataIndex: 'user_tel',
-		width: 90,
+		header: '申请人',
+		dataIndex: 'user_name',
+		flex: 1
+	},{
+		locked: true,
+		header: '申请人电话',
+		dataIndex: 'company_userid',
 		flex: 1
 	}, {
 		locked: true,
-		header: '姓名',
-		dataIndex: 'user_name',
-		width: 80
+		header: '名称',
+		dataIndex: 'company_name',
+		width: 150
 	},{
 		locked: true,
-		header: '用户ID',
-		dataIndex: 'user_id',
-		width: 80
-	},
-	/*应该让用户自己去付费，而不是客服来帮忙做。
-	{
-        locked: true,
-        xtype: 'actioncolumn',
-        width: 80,
-        sortable: false,
-        menuDisabled: true,
-        align: 'center',
-        items: [' ', {
-        	iconCls:'gouwuche',
-            tooltip: '扣费',
-            handler: 'onCutMoney'
-        }]
-    },*/
-	{
-		header: '帖子类型',
-		dataIndex: 'post_table',
-		width: 70,
-		renderer: 'OnPostType',
-	},{
-		header: '帖子ID',
-		dataIndex: 'post_id',
-		width: 70
+		header: '短名称',
+		dataIndex: 'company_short_name',
+		width: 60
 	},{
         xtype: 'actioncolumn',
+		locked: true,
 		header: '帖子状态',
 		align: 'center',
 		getClass:function(v,metadata,r,rowIndex,colIndex,store){
-			if(r.raw.post_status=='-2'){
+			if(r.raw.company_status=='-3'){
 				return 'info';
 			}
-			if(r.raw.post_status=='-1'){
+			if(r.raw.company_status=='-1'){
 				return 'error';
 			}
-			if(r.raw.post_status=='0'){
+			if(r.raw.company_status=='0'){
 				return 'ok';
 			}
 		},
 		width: 60
 	},{
-		header: '帖子标题',
-		dataIndex: 'post_title',
-		width: 250
-	},{
         xtype: 'actioncolumn',
-		header: '审核/禁用/生效',
+		header: '待交费/禁用/生效',
         width: 120,
         sortable: false,
         menuDisabled: true,
         align: 'center',
         items: [{
         	iconCls:'ok',
-            tooltip: '审核通过',
+            tooltip: '已交费',
 			isDisabled:function(view , rowIndex , colIndex , item, record) {
-				if(record.raw.post_status=="-2"){return false;}
+				if(record.raw.company_status=="-3"){return false;}
 				else {return true;}
 			}, 
             handler: 'onPass'
@@ -127,7 +104,7 @@ Ext.define('app.view.module.post.Post', {
         	iconCls:'error',
             tooltip: '禁用',
 			isDisabled:function(view , rowIndex , colIndex , item, record) {
-				if(record.raw.post_status!="-1"){return false;}
+				if(record.raw.company_status!="-1"){return false;}
 				else {return true;}
 			}, 
             handler: 'onNo'
@@ -135,37 +112,35 @@ Ext.define('app.view.module.post.Post', {
         	iconCls:'ok',
             tooltip: '启用',
 			isDisabled:function(view , rowIndex , colIndex , item, record) {
-				if(record.raw.post_status=="-1"){return false;}
+				if(record.raw.company_status=="-1"){return false;}
 				else {return true;}
 			}, 
             handler: 'onYes'
         }]
-    },{
-        xtype: 'actioncolumn',
-		header: '刷新付费',
-		align: 'center',
-		iconCls:'edit',
-		width: 60,
-		handler: 'onPay'
+    }, {
+		header: '类型',
+		dataIndex: 'company_leixing',
+		width: 80
+	},{
+		header: '联系电话',
+		dataIndex: 'company_tel',
+		flex: 1
+	},{
+		header: '地址',
+		dataIndex: 'company_address',
+		width: 150
 	},{
 		xtype: 'datecolumn',
 		format: 'Y-m-d H:i:s',
-		header: '自动刷新',
-		dataIndex: 'post_build_time',
-		align: 'center',
-		width: 136
-	},  {
-		xtype: 'datecolumn',
-		format: 'Y-m-d H:i:s',
 		header: '创建时间',
-		dataIndex: 'post_create_time',
+		dataIndex: 'company_create_time',
 		align: 'center',
 		width: 136
 	},  {
 		xtype: 'datecolumn',
 		format: 'Y-m-d H:i:s',
 		header: '修改时间',
-		dataIndex: 'post_modify_time',
+		dataIndex: 'company_modify_time',
 		align: 'center',
 		width: 136
 	}],

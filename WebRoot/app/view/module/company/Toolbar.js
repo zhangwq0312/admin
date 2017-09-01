@@ -1,7 +1,7 @@
-Ext.define('app.view.module.post.PostToolbar', {
+Ext.define('app.view.module.company.Toolbar', {
 	extend: 'Ext.toolbar.Toolbar',
     
-	alias: 'widget.post-toolbar',
+	alias: 'widget.company_toolbar',
 	
 	defaultType: 'textfield',
 		items: [{  	
@@ -14,7 +14,7 @@ Ext.define('app.view.module.post.PostToolbar', {
 					}
 				}, {
 					name: 'title',
-					fieldLabel: '标题关键词',
+					fieldLabel: '名称关键词',
 					labelAlign: 'right',
 					flex: 1,
 					listeners: {
@@ -61,33 +61,11 @@ Ext.define('app.view.module.post.PostToolbar', {
 							{status_name:'不限',status_id:''},
 							{status_name:'正常',status_id : '0'},
 							{status_name:'禁用',status_id : '-1'},
-							{status_name:'待审核',status_id : '-2'}
+							{status_name:'待交费',status_id : '-3'}
 						]
 					},
 					listeners: {
 						select: 'onSearchChangeStatus'
-					}
-					
-				}, {
-					xtype:'combobox',
-					name: 'orderBy',
-					fieldLabel: '排序',
-					labelAlign: 'right',
-					editable: false,
-					displayField: 'orderBy_name',
-					valueField:'orderField',
-					flex: 1,
-
-					store: {
-						xtype: 'Ext.data.Store',
-						fields:['orderBy_name','orderField'],
-						data: [
-							{orderBy_name:'默认（创建时间）',orderField:'0'},
-							{orderBy_name:'发布时间',orderField : '1'}
-						]
-					},
-					listeners: {
-						select: 'onSearchChangeOrderBy'
 					}
 					
 				},{

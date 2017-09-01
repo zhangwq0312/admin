@@ -16,7 +16,7 @@ public class CutTypeDao extends BaseDaoImpl<CutType, String>  {
 //exist
 	public CutType findByName(String name) {
 
-		CutType cutTypes = null;
+		CutType cutType = null;
 		List<CutType> cutTypesList = new ArrayList<CutType>();
 		if (name != null && name.trim().length() > 0) {
 			String sql = "select * from zz_cutTypes t where t.name='" + name + "'";
@@ -24,10 +24,10 @@ public class CutTypeDao extends BaseDaoImpl<CutType, String>  {
 		}
 
 		if (cutTypesList != null && cutTypesList.size() > 0) {
-			cutTypes = cutTypesList.get(0);
+			cutType = cutTypesList.get(0);
 		}
 
-		return cutTypes;
+		return cutType;
 	}
 
 	@SuppressWarnings("unchecked")

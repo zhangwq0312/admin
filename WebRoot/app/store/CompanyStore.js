@@ -1,4 +1,4 @@
-Ext.define("app.store.PostStore", {
+Ext.define("app.store.CompanyStore", {
     extend: "Ext.data.Store",
     autoDestroy: true,
     fields: [
@@ -7,7 +7,7 @@ Ext.define("app.store.PostStore", {
     pageSize: 20,
     proxy: {
     	type: 'ajax',
-    	url: 'post/query.do',//参考的是主题管理里面的代码。
+    	url: 'company/query.do',//参考的是主题管理里面的代码。
     	reader: {
     		type: 'json',
     		totalProperty : "total",

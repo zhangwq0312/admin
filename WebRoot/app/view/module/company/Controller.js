@@ -1,11 +1,11 @@
-Ext.define('app.view.module.post.PostController', {
+Ext.define('app.view.module.company.Controller', {
     extend: 'Ext.app.ViewController',
 
     requires: [
         'Ext.window.Toast'
     ],
     mainViewModel: null,
-    alias: 'controller.post',
+    alias: 'controller.company',
 	
 	parseStatusV: function(v) {
     	var str = '';
@@ -46,8 +46,6 @@ Ext.define('app.view.module.post.PostController', {
     	store.proxy.extraParams.title = viewModel.get('search_title');
     	store.proxy.extraParams.type = viewModel.get('search_type');
     	store.proxy.extraParams.status = viewModel.get('search_status');
-    	store.proxy.extraParams.orderby = viewModel.get('search_orderby');
-    	console.log('----------'+viewModel.get('search_orderby'));
 		store.load();
     	//viewModel.set('c_id', -1);
 	},
@@ -69,13 +67,9 @@ Ext.define('app.view.module.post.PostController', {
     	var viewModel = this.getView().getViewModel();
 		viewModel.set('search_type', record.raw.type_id);
     },
-	onSearchChangeOrderBy : function(combo, record) {
-    	var viewModel = this.getView().getViewModel();
-		viewModel.set('search_orderby', record.raw.orderField);
-    },
 	onPass: function(view,rowIndex,colIndex,item,e,record) {
 		var type='pass';
-		var title='审核通过';
+		var title='待交费';
 		this.change(view,rowIndex,colIndex,item,e,record,type,title);
     },
 	onNo: function(view,rowIndex,colIndex,item,e,record) {
@@ -94,7 +88,7 @@ Ext.define('app.view.module.post.PostController', {
 	
 		Ext.Msg.show({
 		    title:title,
-		    message: '帖子标题：' + record.raw.post_title,
+		    message: '名称：' + record.raw.company_name,
 		    buttons: Ext.Msg.YESNO,
 		    icon: Ext.Msg.QUESTION,
 		    scope: this,
@@ -110,12 +104,11 @@ Ext.define('app.view.module.post.PostController', {
     	view.mask('执行中...');
     	
     	Ext.Ajax.request({
-    		url: 'post/change.do',
+    		url: 'company/change.do',
     		async: true,
     		params: {
 				type:type,
-    			post_id: record.raw.post_id,
-				post_table:record.raw.post_table,
+    			company_id: record.raw.company_id,
     		},
     		scope: this,
     		success: function(resp, opt) {
@@ -130,59 +123,5 @@ Ext.define('app.view.module.post.PostController', {
     		}
     	});
     },
-	
-	onPay:function(view,rowIndex,colIndex,item,e,record) {
-	
-	  	var s = this.mainViewModel.get('cutTypeStore');
-		s.clearFilter(); 
-		s.filterBy(function(record){  
-			return record.raw.status > -1&&record.raw.type=='post_flush';  
-		});  
-		s.reload();
-	
-	   	var win = this.lookupReference('paywindow');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.post.PayWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
-	},
-	
-	onPaySubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('paywindow');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	var url = 'post/paySubmit.do';
-		
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
-    },
+
 });

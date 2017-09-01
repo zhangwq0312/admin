@@ -1,5 +1,6 @@
 package com.shengxi.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +21,7 @@ import com.shengxi.service.IAccountHistoryService;
 import com.shengxi.service.IAccountService;
 import com.shengxi.service.UserService;
 import com.shengxi.showmodel.MoneyUser;
+import com.shengxi.showmodel.PostUser;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -45,6 +47,71 @@ public class UserController extends MultiActionController {
 	@Qualifier("cutTypeService")
 	private CutTypeService cutTypeService;
 	
+	
+	@RequestMapping("queryAccountHistory.do")
+	public void queryAccountHistory(HttpServletRequest req, HttpServletResponse resp)	throws Exception {
+
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		
+		boolean issuc = false;
+		String msg = "修改失败";
+		
+		JSONArray root = new JSONArray();
+		try {
+			
+			String idStr = req.getParameter("i_id")==null?"0":req.getParameter("i_id");
+			String type = req.getParameter("type")==null?"":req.getParameter("type");
+			int firstResult = Integer.parseInt(req.getParameter("start"));
+			int maxResults = firstResult + Integer.parseInt(req.getParameter("limit"));
+			
+			List<IAccountHistory> hs = iaccountHistoryService.findByAccountId(firstResult,maxResults,idStr,type);
+			
+			for(IAccountHistory h: hs) {
+				if(h == null) continue;
+				
+				CutType ct = new CutType();
+				if("cut".equals(type)){
+					ct = cutTypeService.findById(String.valueOf(h.getCuttype_id()));
+				}
+
+				
+				
+				JSONObject json = new JSONObject();
+				json.put("h_id", h.getId());
+				json.put("userid", h.getUserid());
+				json.put("account_id", h.getAccount_id());
+				json.put("money_change",h.getMoney_change());
+				
+				if("cut".equals(type)){
+					json.put("cuttype_type", StringTool.null2Empty(h.getCuttype_type()));
+					json.put("cuttype_id", h.getCuttype_id());
+					json.put("unit_num", h.getUnit_num());
+					String cut_reason = h.getUnit_num()+"份“"+ct.getName()+"”业务，单价"+ct.getUnit_price()+"元，合计"+h.getUnit_num()*ct.getUnit_price()+"元";
+					json.put("cut_reason", cut_reason);
+					
+					json.put("post_table", StringTool.null2Empty(h.getPost_table()));
+					json.put("post_id", h.getPost_id());
+					json.put("post_title", StringTool.null2Empty(h.getPost_title()));
+				}
+				
+				json.put("create_time", BmUtil.formatDate(h.getCreate_time()));
+				json.put("operator_id", h.getOperator_id());
+				
+				if(json != null){
+					root.add(json);
+				}
+			}
+			issuc=true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			
+			logger.info(root);
+			resp.getWriter().print(root);
+		}
+			
+	}
 	@RequestMapping("addMoney.do")
 	public void addMoney(HttpServletRequest req, HttpServletResponse resp)
 			throws Exception {
@@ -86,84 +153,6 @@ public class UserController extends MultiActionController {
 				history.setAccount_id(Long.parseLong(idStr));
 				iaccountHistoryService.save(history);
 			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (issuc) {
-				msg = "修改成功";
-			}
-			
-			JSONObject rootJson = new JSONObject();
-			rootJson.put("success", true);
-			rootJson.put("issuc", issuc);
-			rootJson.put("msg", msg);
-			
-			logger.info(rootJson);
-			resp.getWriter().print(rootJson);
-		}
-	}
-	
-	@RequestMapping("cutMoney.do")
-	public void cutMoney(HttpServletRequest req, HttpServletResponse resp)
-			throws Exception {
-
-		logger.info("--:");
-		resp.setContentType("application/json; charset=UTF-8");
-		
-		boolean issuc = false;
-		String msg = "扣费失败，请通知技术部门";
-		try {
-			String idStr = req.getParameter("i_id")==null?"0":req.getParameter("i_id");
-			
-			String cutTypeId = req.getParameter("cutTypeId")==null?"0":req.getParameter("cutTypeId");
-			String unit_num_str = req.getParameter("unit_num")==null?"0":req.getParameter("unit_num");
-			int unit_num = Integer.parseInt(unit_num_str);
-			CutType ct = cutTypeService.findById(cutTypeId);
-			int cutmoney = ct.getUnit_price()*unit_num; //该类型该周期的价格*N个周期 
-		   
-			IAccount iaccount = iaccountService.findById(idStr);
-			
-			if(iaccount == null ) {
-				msg="请先给客服充值";
-				issuc=false;
-			}else{
-				int money_now = iaccount.getMoney_now()-cutmoney;
-				int money_cut = iaccount.getMoney_cut()+cutmoney;
-				int integral_cut =iaccount.getIntegral_cut()+ cutmoney;
-				if(money_now<0){
-					msg="该客户的余额不足，无法执行该操作";
-					issuc=false;
-				}else{
-					
-					IAccountHistory history = new IAccountHistory();
-					history.setMoney_change(0-cutmoney);
-					Operator operator =(Operator) req.getSession().getAttribute("user");
-					history.setOperator_id(operator.getId());
-					history.setUserid(iaccount.getUserid());
-					history.setAccount_id(Long.parseLong(idStr));
-					history.setCuttype_id(ct.getId());
-					history.setCuttype_type(ct.getType());
-					history.setUnit_num(unit_num);
-					iaccountHistoryService.save(history);
-					
-					//执行具体的业务，如果账户表和账户历史表的记录不一致，可能是下面执行业务的操作出了错误，
-					if("hunlian".equals(ct.getType())){
-						//婚恋是线下操作，不需要修改表中的记录，只需要在历史表登记有这个支出即可。
-					}else if("shangpu".equals(ct.getType())){
-						//商铺需要修改商铺的开始时间和结束时间，而且要通知到用户。需要注意unit_contain_weeks可能需要时间乘起来
-					}else if("flush".equals(ct.getType())){
-						//刷新要指明是哪个帖子，时间从当前时间开始。
-					}
-					
-					iaccount.setMoney_now(money_now);
-					iaccount.setMoney_cut(money_cut);
-					iaccount.setIntegral_cut(integral_cut);
-					issuc = iaccountService.update(iaccount);
-				}
-			}
-
-			
 
 		} catch (Exception e) {
 			e.printStackTrace();

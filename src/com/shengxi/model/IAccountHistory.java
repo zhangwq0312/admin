@@ -17,6 +17,7 @@ public class IAccountHistory implements Serializable {
 	private String cuttype_type;
 	private long cuttype_id;
 	private int unit_num;
+	
 	private Date create_time;
 	private String operator_id;
 	private String post_table;

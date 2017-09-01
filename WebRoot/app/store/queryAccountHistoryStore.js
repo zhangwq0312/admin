@@ -1,13 +1,12 @@
-Ext.define("app.store.PostStore", {
+Ext.define("app.store.queryAccountHistoryStore", {
     extend: "Ext.data.Store",
     autoDestroy: true,
     fields: [
-   
-	],
+    ],
     pageSize: 20,
     proxy: {
     	type: 'ajax',
-    	url: 'post/query.do',//参考的是主题管理里面的代码。
+    	url: 'user/queryAccountHistory.do',//参考的是主题管理里面的代码。
     	reader: {
     		type: 'json',
     		totalProperty : "total",
@@ -15,4 +14,8 @@ Ext.define("app.store.PostStore", {
     	},
     	timeout:3000000
     },
+    sorters: [{
+    	property: 'h_id',
+        direction:'DESC'
+    }]
 });

@@ -50,6 +50,11 @@ Ext.define('app.view.module.user.User', {
 	
 	columns: [{
 		locked: true,
+		header: '账户ID',
+		dataIndex: 'i_id',
+		width: 80
+	},{
+		locked: true,
 		header: '电话',
 		dataIndex: 'tel',
 		width: 90,
@@ -59,11 +64,6 @@ Ext.define('app.view.module.user.User', {
 		header: '姓名',
 		dataIndex: 'username',
 		width: 120
-	},{
-		locked: true,
-		header: '账户ID',
-		dataIndex: 'i_id',
-		width: 80
 	},{
 		locked: true,
 		header: '当前金额',
@@ -87,6 +87,10 @@ Ext.define('app.view.module.user.User', {
 		dataIndex: 'money_add',
 		width: 80
 	},{
+		header: '总扣费',
+		dataIndex: 'money_cut',
+		width: 80
+	},{
         xtype: 'actioncolumn',
         width: 100,
         sortable: false,
@@ -94,23 +98,8 @@ Ext.define('app.view.module.user.User', {
         align: 'center',
         items: [{
         	iconCls: 'edit',
-        	tooltip: '交费明细',
-            handler: 'queryAddMoney'
-        }]
-    },{
-		header: '总扣费',
-		dataIndex: 'money_cut',
-		width: 80
-	},{
-        xtype: 'actioncolumn',
-        width: 60,
-        sortable: false,
-        menuDisabled: true,
-        align: 'center',
-        items: [{
-        	iconCls:'edit',
-            tooltip: '扣费明细',
-            handler: 'queryCutMoney'
+        	tooltip: '明细',
+            handler: 'queryAddCut'
         }]
     },{
 		header: '当前积分',

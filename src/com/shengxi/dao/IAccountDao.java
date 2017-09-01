@@ -18,7 +18,7 @@ public class IAccountDao extends BaseDaoImpl<IAccount, String> implements  IBase
 		IAccount account = null;
 		List<IAccount> list = new ArrayList<IAccount>();
 		if (tel != null && tel.trim().length() > 0) {
-			String sql = "select * from i_account t where t.userid='" + tel + "' limit 1";
+			String sql = "select * from i_account  where userid='" + tel + "' limit 1";
 			list = findAllBySql(sql);
 		}
 

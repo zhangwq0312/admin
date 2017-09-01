@@ -11,7 +11,8 @@ Ext.define('app.view.main.MainController', {
 		'app.view.module.role.Role',
 		'app.view.module.user.User',
 		'app.view.module.cuttype.CutType',
-		'app.view.module.post.Post'
+		'app.view.module.post.Post',
+		'app.view.module.company.Company',
 	],
 
     alias: 'controller.main',

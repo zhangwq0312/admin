@@ -2,17 +2,7 @@ Ext.define("app.store.UserStore", {
     extend: "Ext.data.Store",
     autoDestroy: true,
     fields: [
-        {name: 'c_id', type: 'string'},
-        {name: 'tel', type: 'string'},
-        {name: 'username', type: 'string'},
-        {name: 'ni', type: 'string'},
-        {name: 'status', type: 'string'},
-        {name: 'sex', type: 'string'},
-        {name: 'mail', type: 'string'},
-        {name: 'born_day', type: 'string'},
-        {name: 'address', type: 'string'},
-		{name: 'create_time', type: 'date', dateFormat: 'Y-m-d H:i:s'},
-		{name: 'modify_time', type: 'date', dateFormat: 'Y-m-d H:i:s'}
+//太神奇了，居然不用指定也能用。也许字段名一样的情况下是可以自动装配的。
     ],
     pageSize: 20,
     proxy: {

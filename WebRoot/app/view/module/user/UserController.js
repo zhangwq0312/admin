@@ -56,7 +56,36 @@ Ext.define('app.view.module.user.UserController', {
     	var viewModel = this.getView().getViewModel();
 		viewModel.set('search_status', record.raw.status_id);
     },
-	onCutMoney: function(grid, row, col, item, e, record) {
+	
+	queryAddCut: function(grid, row, col, item, e, record) {
+    	var win = this.lookupReference('queryAddCut');
+    	
+    	if (!win) {
+            win = Ext.create('app.view.module.user.queryAddCut', {
+            	viewModel: this.getView().getViewModel(),
+				
+            });
+            this.getView().add(win);
+			
+        }
+		
+		var store = win.down('queryAddMoneyGrid').getStore();
+		store.proxy.extraParams.i_id = record.raw.i_id;
+		store.proxy.extraParams.type = 'add';
+		store.removeAll();
+		store.load();
+		
+		var store2 = win.down('queryCutMoneyGrid').getStore();
+		store2.proxy.extraParams.i_id = record.raw.i_id;
+		store2.proxy.extraParams.type = 'cut';
+		store2.removeAll();
+		store2.load();
+		
+    	win.show();
+    },
+	
+	
+	/*onCutMoney: function(grid, row, col, item, e, record) {
 	
 	  	var s = this.mainViewModel.get('cutTypeStore');
 		s.clearFilter(); 
@@ -78,7 +107,7 @@ Ext.define('app.view.module.user.UserController', {
     	win.down('form').loadRecord(record);
     	
     	win.show();
-    },
+    },*/
     onAddMoney: function(grid, row, col, item, e, record) {
 
     	var win = this.lookupReference('add_money_window');

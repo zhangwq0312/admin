@@ -1,12 +1,10 @@
 package com.shengxi.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.httpclient.util.DateUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -70,12 +68,19 @@ public class PostController extends MultiActionController {
 			int status = 0;
 			if("pass".equals(type)){
 				status=0;
+				issuc=postService.update(post_id,status,post_table);
 			}else if("yes".equals(type)){
 				status=0;
+				issuc=postService.update(post_id,status,post_table);
 			}else if("no".equals(type)){
 				status=-1;
+				if(postService.ifAutoFlushing(post_table,post_id)!=1){
+					issuc=postService.update(post_id,status,post_table);
+				}else{
+					msg="该帖子已经订购了刷新业务，不能由客服禁用，只能由用户禁用。";
+				}
 			}
-			issuc=postService.update(post_id,status,post_table);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -154,33 +159,30 @@ public class PostController extends MultiActionController {
 		}
 	}
 
-
 	
-	@RequestMapping("cutMoney.do")
-	public void cutMoney(HttpServletRequest req, HttpServletResponse resp)
-			throws Exception {
-
+	@RequestMapping("paySubmit.do")
+	public void paySubmit(HttpServletRequest req, HttpServletResponse resp) throws Exception {
 		logger.info("--:");
 		resp.setContentType("application/json; charset=UTF-8");
 		
 		boolean issuc = false;
-		String msg = "扣费失败，请通知技术部门";
+		String msg = "支付失败，请通知技术部门";
+		
 		try {
 			String user_tel = req.getParameter("user_tel")==null?"":req.getParameter("user_tel");
-			String user_name = req.getParameter("user_name")==null?"":req.getParameter("user_name");
 
 			String post_table = req.getParameter("post_table")==null?"0":req.getParameter("post_table");	
 			String post_id = req.getParameter("post_id")==null?"0":req.getParameter("post_id");
 			String post_title = req.getParameter("post_title")==null?"0":req.getParameter("post_title");
+			
 			String cutTypeId = req.getParameter("cutTypeId")==null?"":req.getParameter("cutTypeId");
 			String unit_num_str = req.getParameter("unit_num")==null?"":req.getParameter("unit_num");
-			String agreement_begin_date = req.getParameter("agreement_begin_date")==null?"":req.getParameter("agreement_begin_date");
 			
 			int unit_num = Integer.parseInt(unit_num_str);
 			CutType ct = cutTypeService.findById(cutTypeId);
 			int cutmoney = ct.getUnit_price()*unit_num; //该类型该周期的价格*N个周期 
 		   
-			IAccount iaccount = iaccountService.findById(user_tel);
+			IAccount iaccount = iaccountService.findByTel(user_tel);
 			
 			if(iaccount == null ) {
 				msg="请先给客服充值";
@@ -194,39 +196,45 @@ public class PostController extends MultiActionController {
 					issuc=false;
 				}else{
 					
-					IAccountHistory history = new IAccountHistory();
-					history.setMoney_change(0-cutmoney);
-					Operator operator =(Operator) req.getSession().getAttribute("user");
-					history.setOperator_id(operator.getId());
-					history.setUserid(iaccount.getUserid());
-					history.setAccount_id(Long.parseLong(iaccount.getId()));
-					history.setCuttype_id(ct.getId());
-					history.setCuttype_type(ct.getType());
-					history.setUnit_num(unit_num);
-					//帖子
-					history.setPost_id(Long.parseLong(post_id));
-					history.setPost_table(post_table);
-					history.setPost_title(post_title);
-
-					iaccountHistoryService.save(history);
-					
 					int fullWeeks = ct.getUnit_contain_weeks()*unit_num;
-//					postService.updatePublishDate(fullWeeks,post_table,post_id);
-					
-					iaccount.setMoney_now(money_now);
-					iaccount.setMoney_cut(money_cut);
-					iaccount.setIntegral_cut(integral_cut);
-					issuc = iaccountService.update(iaccount);
+					boolean issus2 = postService.updatePublishDate(fullWeeks,post_table,post_id);
+					if(issus2){
+
+						IAccountHistory history = new IAccountHistory();
+						history.setMoney_change(0-cutmoney);
+						Operator operator =(Operator) req.getSession().getAttribute("user");
+						history.setOperator_id(operator.getId());
+						history.setUserid(iaccount.getUserid());
+						history.setAccount_id(Long.parseLong(iaccount.getId()));
+						history.setCuttype_id(ct.getId());
+						history.setCuttype_type(ct.getType());
+						history.setUnit_num(unit_num);
+						
+						//帖子
+						history.setPost_id(Long.parseLong(post_id));
+						history.setPost_table(post_table);
+						history.setPost_title(post_title);
+						iaccountHistoryService.save(history);
+						
+						iaccount.setMoney_now(money_now);
+						iaccount.setMoney_cut(money_cut);
+						iaccount.setIntegral_cut(integral_cut);
+						issuc = iaccountService.update(iaccount);
+					}
+
 				}
 			}
 
-			
+//			if("marriage_valid".equals(ct.getType())){
+//				//婚恋是线下操作，不需要修改表中的记录，只需要在历史表登记有这个支出即可。
+//			}else if("company_valid".equals(ct.getType())){
+//				//商铺需要修改商铺的开始时间和结束时间，而且要通知到用户。需要注意unit_contain_weeks可能需要时间乘起来
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (issuc) {
-				msg = "修改成功";
+				msg = "支付成功";
 			}
 			
 			JSONObject rootJson = new JSONObject();
@@ -238,7 +246,5 @@ public class PostController extends MultiActionController {
 			resp.getWriter().print(rootJson);
 		}
 	}
-
-	
 
 }

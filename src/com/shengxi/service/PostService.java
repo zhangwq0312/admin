@@ -23,6 +23,13 @@ public class PostService {
 	public List<PostUser> findAll(String orderby,String tel, String title, String type,String status, int firstResult, int maxResults) {
 		return dao.findAll(orderby,tel, title, type,status,firstResult, maxResults);
 	}
+
+	public boolean updatePublishDate(int fullWeeks, String post_table, String post_id) {
+		return dao.updatePublishDate(fullWeeks,post_table,post_id);
+	}
 	
+	public int ifAutoFlushing(String post_table, String post_id) {
+		return  dao.ifAutoFlushing(post_table,post_id);
+	}
 
 }

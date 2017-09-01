@@ -1,6 +1,7 @@
 package com.shengxi.service;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,7 +28,11 @@ public class IAccountHistoryService {
 		return true;
 	}
 
-	public boolean findByCutType(String id) {
-		return dao.findByCutType(id);
+	public boolean findByCutType(String cuttype_id) {
+		return dao.findByCutType(cuttype_id);
+	}
+	
+	public List<IAccountHistory> findByAccountId(int firstResult,int maxResults,String account_id,String type) {
+		return dao.findByAccountId(firstResult,maxResults,account_id,type);
 	}
 }
