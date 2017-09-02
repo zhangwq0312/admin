@@ -23,6 +23,13 @@ public class CompanyService {
 	public List<Company> findAll(String tel, String title, String type,String status, int firstResult, int maxResults) {
 		return dao.findAll(tel, title, type,status,firstResult, maxResults);
 	}
+
+	public boolean updateValidDate(int fullWeeks, String company_id) {
+		return dao.updateValidDate(fullWeeks,company_id);
+	}
 	
+	public int isValiding (String company_id){
+		return dao.isValiding(company_id);
+	}
 
 }

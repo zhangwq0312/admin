@@ -53,7 +53,11 @@ Ext.define('app.view.module.user.queryCutMoneyGrid', {
 	},{
 		header: '详情',
 		dataIndex: 'cut_reason',
-		width: 370
+		width: 370,
+		renderer: function(value, meta, record) {
+			meta.style = 'white-space:normal;word-wrap: break-word;'; 
+			return value;
+		}
 	}],
  
 	iconCls: 'icon-grid',

@@ -67,11 +67,62 @@ Ext.define('app.view.module.company.Controller', {
     	var viewModel = this.getView().getViewModel();
 		viewModel.set('search_type', record.raw.type_id);
     },
-	onPass: function(view,rowIndex,colIndex,item,e,record) {
-		var type='pass';
-		var title='待交费';
-		this.change(view,rowIndex,colIndex,item,e,record,type,title);
+	onPay: function(view,rowIndex,colIndex,item,e,record) {
+	
+	  	var s = this.mainViewModel.get('cutTypeStore');
+		s.clearFilter(); 
+		s.filterBy(function(record){  
+			return record.raw.status > -1&&record.raw.type=='company_valid';  
+		});  
+		s.reload();
+	
+	   	var win = this.lookupReference('company_paywindow');
+    	
+    	if (!win) {
+            win = Ext.create('app.view.module.company.PayWindow', {
+            	viewModel: this.getView().getViewModel()
+            });
+            this.getView().add(win);
+			
+        }
+    	
+    	win.down('form').loadRecord(record);
+    	
+    	win.show();
     },
+	
+	onPaySubmit: function() {
+    	var grid = this.getView();
+    	var win = this.lookupReference('company_paywindow');
+    	var form = win.down('form');
+    	var values = form.getValues();
+    	var url = 'company/paySubmit.do';
+		
+    	if (form.isValid()){
+    		win.mask('正在保存...');
+    		
+	    	form.submit({
+	    		clientValidation: true,
+	    	    url: url,
+	    		params: values,
+	    		submitEmptyText: false,
+	    		success: function(form, action) {
+	    			if(action.result.issuc) {
+	    				form.reset();
+	    				win.hide();
+	//    				win.destroy();
+	    				
+	    				grid.getStore().reload();
+	    			}
+	    			win.unmask();
+	    			
+	    			Ext.Msg.alert('提示', action.result.msg);
+	    		}
+	    	});
+    	}
+    },
+	
+	
 	onNo: function(view,rowIndex,colIndex,item,e,record) {
 		var type='no';
 		var title='禁用';

@@ -1,8 +1,8 @@
-Ext.define('app.view.module.user.CutMoneyWindow', {
+Ext.define('app.view.module.company.PayWindow', {
 	extend: 'Ext.window.Window',
-	alias: 'widget.cut_money_window',
+	alias: 'widget.company_paywindow',
 	
-	reference: 'cut_money_window',
+	reference: 'company_paywindow',
 	
 	uses: [
 	   'app.ux.form.MultiTextAreaField'
@@ -16,7 +16,7 @@ Ext.define('app.view.module.user.CutMoneyWindow', {
 	autoShow: true,
 	width: 390,
 	scrollable: true,
-	title: '扣费',
+	title: '购买',
 	glyph: 0xf007,
 	initComponent: function() {
 		this.maxHeight = Ext.getBody().getHeight() - 20;
@@ -32,18 +32,22 @@ Ext.define('app.view.module.user.CutMoneyWindow', {
 	    },
 	    defaultType: 'textfield',
 		items: [{
-			name: 'i_id',
-			fieldLabel: '账户ID',
+			name: 'company_userid',
+			fieldLabel: '申请人电话',
 			readOnly: true
 		}, {
-			name: 'tel',
-			fieldLabel: '电话',
+			name: 'user_name',
+			fieldLabel: '申请人',
 			readOnly: true
-		}, {
-			name: 'username',
-			fieldLabel: '姓名',
-			readOnly: true
-		}, {
+		},{
+			fieldLabel: '商户ID',
+			name: 'company_id',
+			hidden:true,
+		},{
+			name: 'company_name',
+			fieldLabel: '商户名称',
+			readOnly: true,
+		},  {
 			xtype: 'combobox',
 			name: 'cutTypeId',
 			allowBlank: false,
@@ -63,26 +67,35 @@ Ext.define('app.view.module.user.CutMoneyWindow', {
 			maxValue: 9999,
 			minValue: 1,
 			name: 'unit_num',
-			fieldLabel: '套餐份数',
+			fieldLabel: '*套餐份数',
 			emptyText: '',
+		},{
+			xtype : 'datefield',
+			name : 'company_valid_time',
+			allowBlank : false,
+			flex : 1,
+			fieldLabel : '有效时间',
+			format : 'Y-m-d H:i:s',
+			readOnly: true,
 		},{
 			xtype : 'datefield',
 			name : 'begin_date',
 			allowBlank : false,
 			flex : 1,
-			fieldLabel : '*开始时间',
+			fieldLabel : '当前时间',
 			value : new Date(),
-			format : 'Y-m-d H:i:s'
+			format : 'Y-m-d H:i:s',
+			readOnly: true,
 		} ]
 	}],
 	buttonAlign: 'center',
 	buttons: [{
 		text: '提交',
-		handler: 'onCutMoneySubmit'
+		handler: 'onPaySubmit'
 	}, {
 		text: '取消',
 		handler: function(btn) {
-			btn.up('cut_money_window').hide();
+			btn.up('company_paywindow').hide();
 		}
 	}],
 	listeners: {

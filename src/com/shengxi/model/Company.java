@@ -29,7 +29,15 @@ public class Company implements Serializable {
 	@IField(update = false)
 	private Date create_time;
 	private Date modify_time;
+	private Date valid_time;
 	
+	
+	public Date getValid_time() {
+		return valid_time;
+	}
+	public void setValid_time(Date valid_time) {
+		this.valid_time = valid_time;
+	}
 	public long getId() {
 		return id;
 	}

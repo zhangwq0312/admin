@@ -83,31 +83,7 @@ Ext.define('app.view.module.user.UserController', {
 		
     	win.show();
     },
-	
-	
-	/*onCutMoney: function(grid, row, col, item, e, record) {
-	
-	  	var s = this.mainViewModel.get('cutTypeStore');
-		s.clearFilter(); 
-		s.filterBy(function(record){  
-			return record.raw.status > -1;  
-		});  
-		s.reload();
-		
-    	var win = this.lookupReference('cut_money_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.user.CutMoneyWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
-    },*/
+
     onAddMoney: function(grid, row, col, item, e, record) {
 
     	var win = this.lookupReference('add_money_window');
@@ -155,35 +131,5 @@ Ext.define('app.view.module.user.UserController', {
 	    	});
     	}
     },
-    onCutMoneySubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('cut_money_window');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	var url = 'user/cutMoney.do';
-		
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
-    },
-	
+
 });

@@ -60,7 +60,7 @@ Ext.define('app.view.module.company.Company', {
 		flex: 1
 	}, {
 		locked: true,
-		header: '名称',
+		header: '商户名称',
 		dataIndex: 'company_name',
 		width: 150
 	},{
@@ -71,36 +71,28 @@ Ext.define('app.view.module.company.Company', {
 	},{
         xtype: 'actioncolumn',
 		locked: true,
-		header: '帖子状态',
+		header: '状态',
 		align: 'center',
 		getClass:function(v,metadata,r,rowIndex,colIndex,store){
-			if(r.raw.company_status=='-3'){
+			if(r.raw.company_status=='0'&&r.raw.isvalid=='-1'){
 				return 'info';
 			}
 			if(r.raw.company_status=='-1'){
 				return 'error';
 			}
-			if(r.raw.company_status=='0'){
+			if(r.raw.company_status=='0'&&r.raw.isvalid=='0'){
 				return 'ok';
 			}
 		},
 		width: 60
 	},{
         xtype: 'actioncolumn',
-		header: '待交费/禁用/生效',
+		header: '禁用/生效',
         width: 120,
         sortable: false,
         menuDisabled: true,
         align: 'center',
         items: [{
-        	iconCls:'ok',
-            tooltip: '已交费',
-			isDisabled:function(view , rowIndex , colIndex , item, record) {
-				if(record.raw.company_status=="-3"){return false;}
-				else {return true;}
-			}, 
-            handler: 'onPass'
-        },' ',{
         	iconCls:'error',
             tooltip: '禁用',
 			isDisabled:function(view , rowIndex , colIndex , item, record) {
@@ -118,6 +110,13 @@ Ext.define('app.view.module.company.Company', {
             handler: 'onYes'
         }]
     }, {
+        xtype: 'actioncolumn',
+		header: '续费',
+		align: 'center',
+		iconCls:'edit',
+		width: 60,
+		handler: 'onPay'
+	},{
 		header: '类型',
 		dataIndex: 'company_leixing',
 		width: 80
@@ -128,7 +127,14 @@ Ext.define('app.view.module.company.Company', {
 	},{
 		header: '地址',
 		dataIndex: 'company_address',
-		width: 150
+		width: 100
+	},{
+		xtype: 'datecolumn',
+		format: 'Y-m-d H:i:s',
+		header: '有效时间',
+		dataIndex: 'company_valid_time',
+		align: 'center',
+		width: 136
 	},{
 		xtype: 'datecolumn',
 		format: 'Y-m-d H:i:s',

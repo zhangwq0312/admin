@@ -1,8 +1,8 @@
 Ext.define('app.view.module.post.PayWindow', {
 	extend: 'Ext.window.Window',
-	alias: 'widget.paywindow',
+	alias: 'widget.post_paywindow',
 	
-	reference: 'paywindow',
+	reference: 'post_paywindow',
 	
 	uses: [
 	   'app.ux.form.MultiTextAreaField'
@@ -71,23 +71,25 @@ Ext.define('app.view.module.post.PayWindow', {
 			maxValue: 9999,
 			minValue: 1,
 			name: 'unit_num',
-			fieldLabel: '套餐份数',
+			fieldLabel: '*套餐份数',
 			emptyText: '',
 		},{
 			xtype : 'datefield',
 			name : 'post_build_time',
 			allowBlank : false,
 			flex : 1,
-			fieldLabel : '*已刷时间',
-			format : 'Y-m-d H:i:s'
+			fieldLabel : '已刷时间',
+			format : 'Y-m-d H:i:s',
+			readOnly: true,
 		},{
 			xtype : 'datefield',
 			name : 'begin_date',
 			allowBlank : false,
 			flex : 1,
-			fieldLabel : '*当前时间',
+			fieldLabel : '当前时间',
 			value : new Date(),
-			format : 'Y-m-d H:i:s'
+			format : 'Y-m-d H:i:s',
+			readOnly: true,
 		} ]
 	}],
 	buttonAlign: 'center',
@@ -97,7 +99,7 @@ Ext.define('app.view.module.post.PayWindow', {
 	}, {
 		text: '取消',
 		handler: function(btn) {
-			btn.up('paywindow').hide();
+			btn.up('post_paywindow').hide();
 		}
 	}],
 	listeners: {

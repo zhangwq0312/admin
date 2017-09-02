@@ -87,12 +87,15 @@ public class UserController extends MultiActionController {
 					json.put("cuttype_type", StringTool.null2Empty(h.getCuttype_type()));
 					json.put("cuttype_id", h.getCuttype_id());
 					json.put("unit_num", h.getUnit_num());
-					String cut_reason = h.getUnit_num()+"份“"+ct.getName()+"”业务，单价"+ct.getUnit_price()+"元，合计"+h.getUnit_num()*ct.getUnit_price()+"元";
-					json.put("cut_reason", cut_reason);
 					
+					String post_title = StringTool.null2Empty(h.getPost_title());
+					json.put("post_title", post_title);
 					json.put("post_table", StringTool.null2Empty(h.getPost_table()));
 					json.put("post_id", h.getPost_id());
-					json.put("post_title", StringTool.null2Empty(h.getPost_title()));
+					
+					String cut_reason = h.getUnit_num()+"份“"+ct.getName()+"”业务，单价"+ct.getUnit_price()+"元，合计"+h.getUnit_num()*ct.getUnit_price()+"元";
+					cut_reason=cut_reason+" <br/>目标：《"+post_title+"("+h.getPost_id()+")》";
+					json.put("cut_reason", cut_reason);
 				}
 				
 				json.put("create_time", BmUtil.formatDate(h.getCreate_time()));

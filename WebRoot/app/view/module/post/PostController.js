@@ -140,7 +140,7 @@ Ext.define('app.view.module.post.PostController', {
 		});  
 		s.reload();
 	
-	   	var win = this.lookupReference('paywindow');
+	   	var win = this.lookupReference('post_paywindow');
     	
     	if (!win) {
             win = Ext.create('app.view.module.post.PayWindow', {
@@ -157,7 +157,7 @@ Ext.define('app.view.module.post.PostController', {
 	
 	onPaySubmit: function() {
     	var grid = this.getView();
-    	var win = this.lookupReference('paywindow');
+    	var win = this.lookupReference('post_paywindow');
     	var form = win.down('form');
     	var values = form.getValues();
     	var url = 'post/paySubmit.do';

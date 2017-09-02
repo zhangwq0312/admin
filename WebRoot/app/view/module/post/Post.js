@@ -50,13 +50,13 @@ Ext.define('app.view.module.post.Post', {
 	
 	columns: [{
 		locked: true,
-		header: '电话',
+		header: '发帖人电话',
 		dataIndex: 'user_tel',
 		width: 90,
 		flex: 1
 	}, {
 		locked: true,
-		header: '姓名',
+		header: '发帖人',
 		dataIndex: 'user_name',
 		width: 80
 	},{
@@ -64,22 +64,7 @@ Ext.define('app.view.module.post.Post', {
 		header: '用户ID',
 		dataIndex: 'user_id',
 		width: 80
-	},
-	/*应该让用户自己去付费，而不是客服来帮忙做。
-	{
-        locked: true,
-        xtype: 'actioncolumn',
-        width: 80,
-        sortable: false,
-        menuDisabled: true,
-        align: 'center',
-        items: [' ', {
-        	iconCls:'gouwuche',
-            tooltip: '扣费',
-            handler: 'onCutMoney'
-        }]
-    },*/
-	{
+	},{
 		header: '帖子类型',
 		dataIndex: 'post_table',
 		width: 70,
@@ -90,7 +75,7 @@ Ext.define('app.view.module.post.Post', {
 		width: 70
 	},{
         xtype: 'actioncolumn',
-		header: '帖子状态',
+		header: '状态',
 		align: 'center',
 		getClass:function(v,metadata,r,rowIndex,colIndex,store){
 			if(r.raw.post_status=='-2'){

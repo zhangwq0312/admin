@@ -1,5 +1,6 @@
 package com.shengxi.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
 import com.shengxi.model.Company;
+import com.shengxi.model.CutType;
+import com.shengxi.model.IAccount;
+import com.shengxi.model.IAccountHistory;
+import com.shengxi.model.Operator;
 import com.shengxi.model.User;
 import com.shengxi.service.CompanyService;
 import com.shengxi.service.CutTypeService;
@@ -61,14 +66,21 @@ public class CompanyController extends MultiActionController {
 			String company_id = req.getParameter("company_id")==null?"0":req.getParameter("company_id");
 	
 			int status = 0;
-			if("pass".equals(type)){
+//			if("pass".equals(type)){
+//				status=0;
+//			}else 
+			if("yes".equals(type)){
 				status=0;
-			}else if("yes".equals(type)){
-				status=0;
+				issuc=companyService.update(company_id,status);
 			}else if("no".equals(type)){
 				status=-1;
+				if(companyService.isValiding(company_id)!=1){
+					issuc=companyService.update(company_id,status);
+				}else{
+					msg="该商户正在有效期内，不能由客服禁用，请联系后端工程师处理。";
+				}
 			}
-			issuc=companyService.update(company_id,status);
+
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -97,8 +109,6 @@ public class CompanyController extends MultiActionController {
 		String title = req.getParameter("title")==null?"":req.getParameter("title");
 		String type = req.getParameter("type")==null?"":req.getParameter("type");
 		String status = req.getParameter("status")==null?"":req.getParameter("status");
-		String orderby = req.getParameter("orderby")==null?"":req.getParameter("orderby");
-		
 
 		int firstResult = Integer.parseInt(req.getParameter("start"));
 		int maxResults = firstResult + Integer.parseInt(req.getParameter("limit"));
@@ -129,8 +139,15 @@ public class CompanyController extends MultiActionController {
 				json.put("company_status",company.getStatus());
 				json.put("company_create_time", BmUtil.formatDate(company.getCreate_time()));
 				json.put("company_modify_time", BmUtil.formatDate(company.getModify_time()));
+				json.put("company_valid_time", BmUtil.formatDate(company.getValid_time()));
+				
+				if(company.getValid_time().getTime()> new Date().getTime()){
+					json.put("isvalid", "0");
+				}else{
+					json.put("isvalid", "-1");
+				}
+				
 				json.put("user_name", StringTool.null2Empty(u.getUsername()));
-
 				if(json != null){
 					root.add(json);
 				}
@@ -142,6 +159,89 @@ public class CompanyController extends MultiActionController {
 			resp.getWriter().print(root);
 		}
 	}
+	
+	
+	@RequestMapping("paySubmit.do")
+	public void paySubmit(HttpServletRequest req, HttpServletResponse resp) throws Exception {
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		
+		boolean issuc = false;
+		String msg = "支付失败，请通知技术部门";
+		
+		try {
+			String company_userid = req.getParameter("company_userid")==null?"0":req.getParameter("company_userid");	
+			String company_id = req.getParameter("company_id")==null?"0":req.getParameter("company_id");
+			String company_name = req.getParameter("company_name")==null?"":req.getParameter("company_name");
 
+			String cutTypeId = req.getParameter("cutTypeId")==null?"":req.getParameter("cutTypeId");
+			String unit_num_str = req.getParameter("unit_num")==null?"":req.getParameter("unit_num");
+			
+			int unit_num = Integer.parseInt(unit_num_str);
+			CutType ct = cutTypeService.findById(cutTypeId);
+			int cutmoney = ct.getUnit_price()*unit_num; //该类型该周期的价格*N个周期 
+		   
+			IAccount iaccount = iaccountService.findByTel(company_userid);
+			
+			if(iaccount == null ) {
+				msg="请先给客服充值";
+				issuc=false;
+			}else{
+				int money_now = iaccount.getMoney_now()-cutmoney;
+				int money_cut = iaccount.getMoney_cut()+cutmoney;
+				int integral_cut =iaccount.getIntegral_cut()+ cutmoney;
+				if(money_now<0){
+					msg="该客户的余额不足，无法执行该操作";
+					issuc=false;
+				}else{
+					
+					int fullWeeks = ct.getUnit_contain_weeks()*unit_num;
+					boolean issus2 = companyService.updateValidDate(fullWeeks,company_id);
+					if(issus2){
 
+						IAccountHistory history = new IAccountHistory();
+						history.setMoney_change(0-cutmoney);
+						Operator operator =(Operator) req.getSession().getAttribute("user");
+						history.setOperator_id(operator.getId());
+						history.setUserid(iaccount.getUserid());
+						history.setAccount_id(Long.parseLong(iaccount.getId()));
+						history.setCuttype_id(ct.getId());
+						history.setCuttype_type(ct.getType());
+						history.setUnit_num(unit_num);
+						
+						//商户
+						history.setPost_id(Long.parseLong(company_id));
+						history.setPost_title(company_name);
+						iaccountHistoryService.save(history);
+						
+						iaccount.setMoney_now(money_now);
+						iaccount.setMoney_cut(money_cut);
+						iaccount.setIntegral_cut(integral_cut);
+						issuc = iaccountService.update(iaccount);
+					}
+
+				}
+			}
+
+//			if("marriage_valid".equals(ct.getType())){
+//				//婚恋是线下操作，不需要修改表中的记录，只需要在历史表登记有这个支出即可。
+//			}else if("company_valid".equals(ct.getType())){
+//				//商铺需要修改商铺的开始时间和结束时间，而且要通知到用户。需要注意unit_contain_weeks可能需要时间乘起来
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (issuc) {
+				msg = "支付成功";
+			}
+			
+			JSONObject rootJson = new JSONObject();
+			rootJson.put("success", true);
+			rootJson.put("issuc", issuc);
+			rootJson.put("msg", msg);
+			
+			logger.info(rootJson);
+			resp.getWriter().print(rootJson);
+		}
+	}
 }

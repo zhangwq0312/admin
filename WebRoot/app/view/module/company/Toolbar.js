@@ -61,7 +61,7 @@ Ext.define('app.view.module.company.Toolbar', {
 							{status_name:'不限',status_id:''},
 							{status_name:'正常',status_id : '0'},
 							{status_name:'禁用',status_id : '-1'},
-							{status_name:'待交费',status_id : '-3'}
+							{status_name:'待交费',status_id : '-99'}
 						]
 					},
 					listeners: {
