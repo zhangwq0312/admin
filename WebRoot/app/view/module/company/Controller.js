@@ -7,6 +7,60 @@ Ext.define('app.view.module.company.Controller', {
     mainViewModel: null,
     alias: 'controller.company',
 	
+	onAddBtn: function() {
+    	var win = this.lookupReference('company_window');
+    	
+    	if (!win) {
+            win = Ext.create('app.view.module.company.CompanyWindow', {
+            	viewModel: this.getView().getViewModel()
+            });
+            this.getView().add(win);
+        }
+    	
+    	win.setTitle('添加');
+    	win.down('form').reset();
+    	
+    	win.show();
+    },
+    onSubmit: function() {
+    	var win = this.lookupReference('company_window');
+		this.submitCommon(win);
+    },
+   submitCommon: function(win) {
+		var grid = this.getView();
+    	var form = win.down('form');
+    	var values = form.getValues();
+    	
+    	var url = 'company/update.do';
+    	if(values.o_id === "-1") {
+    		url = 'company/save.do';
+    	};
+    	
+    	if (form.isValid()){
+    		win.mask('正在保存...');
+    		
+	    	form.submit({
+	    		clientValidation: true,
+	    	    url: url,
+	    		params: values,
+	    		submitEmptyText: false,
+	    		success: function(form, action) {
+	    			if(action.result.issuc) {
+	    				form.reset();
+	    				win.hide();
+	    				grid.getStore().reload();
+	    			}
+					win.unmask();
+	    			Ext.Msg.alert('提示', action.result.msg);
+	    		}
+				
+	    	});
+			
+			
+    	};
+
+	},
+	
 	parseStatusV: function(v) {
     	var str = '';
     	if(this.mainViewModel != null && this.mainViewModel.get('common_shenhe_StatusStore') != null) {
@@ -65,7 +119,7 @@ Ext.define('app.view.module.company.Controller', {
     },
 	onSearchChangeType : function(combo, record) {
     	var viewModel = this.getView().getViewModel();
-		viewModel.set('search_type', record.raw.type_id);
+		viewModel.set('search_type', record.raw.s_id);
     },
 	onPay: function(view,rowIndex,colIndex,item,e,record) {
 	
@@ -74,7 +128,7 @@ Ext.define('app.view.module.company.Controller', {
 		s.filterBy(function(record){  
 			return record.raw.status > -1&&record.raw.type=='company_valid';  
 		});  
-		s.reload();
+		//s.reload();
 	
 	   	var win = this.lookupReference('company_paywindow');
     	
@@ -173,6 +227,14 @@ Ext.define('app.view.module.company.Controller', {
     			Ext.Msg.alert('提示', respJson.msg);
     		}
     	});
+    },
+	
+	parseCompanyTypeV: function(v) {
+    	var str = '';
+    	if(this.mainViewModel != null && this.mainViewModel.get('companyTypeStore') != null) {
+    		str = this.mainViewModel.parseValue(v, 'companyTypeStore', 's_id', 's_name');
+    	}
+    	return str;
     },
 
 });

@@ -18,8 +18,8 @@ public class StatusService   {
 	@Qualifier("statusDao")
 	private  StatusDao statusDao;
 
-	public List<Status> findAll(String table_name, String field_name, String exceptValues) {
-		return statusDao.findStatus(table_name, field_name, exceptValues);
+	public List<Status> findStatus(String table_name) {
+		return statusDao.findStatus(table_name);
 	}
 	
 	public boolean save( Status status) {
@@ -56,10 +56,6 @@ public class StatusService   {
 	
 	public List<Status> findAll(int firstResult, int maxResults) {
 		return statusDao.findAll(firstResult, maxResults);
-	}
-
-	public List<Status> queryStatus(String table_name, String field_name) {
-		return statusDao.queryStatus(table_name, field_name);
 	}
 
 }

@@ -10,6 +10,9 @@ Ext.define('app.view.main.MainModel', {
 		sexStatusStore:null,
 		cutTypeTypeStore:null,
 		cutTypeStore:null,
+        marriageImgStatusStore:null,
+        identityStatusStore:null,
+        msgStatusStore:null,
         system: {
         	name: '客服操作平台',
         	version: 'v1.0',
@@ -28,7 +31,7 @@ Ext.define('app.view.main.MainModel', {
     formulas: {
 		isAdmin: function(get) {
 			return get('username') == 'admin';
-		}
+		},
 	},
 	
 	isAdmin: function() {

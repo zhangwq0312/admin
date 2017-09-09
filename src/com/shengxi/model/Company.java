@@ -30,8 +30,15 @@ public class Company implements Serializable {
 	private Date create_time;
 	private Date modify_time;
 	private Date valid_time;
+	private long create_operator_id;
 	
 	
+	public long getCreate_operator_id() {
+		return create_operator_id;
+	}
+	public void setCreate_operator_id(long create_operator_id) {
+		this.create_operator_id = create_operator_id;
+	}
 	public Date getValid_time() {
 		return valid_time;
 	}

@@ -29,12 +29,12 @@ Ext.define('app.view.module.user.UserToolbar', {
 					displayField: 'status_name',
 					valueField:'status_id',
 					flex: 1,
-
+                    value:'',
 					store: {
 						xtype: 'Ext.data.Store',
 						fields:['status_name','status_id'],
 						data: [
-							{status_name:'不限',status_id:''},
+							{status_name:'请选择',status_id:''},
 							{status_name:'正常',status_id : '0'},
 							{status_name:'禁用',status_id : '-1'}
 						]

@@ -29,12 +29,12 @@ Ext.define('app.view.module.post.PostToolbar', {
 					displayField: 'type_name',
 					valueField:'type_id',
 					flex: 1,
-
+                    value:'',
 					store: {
 						xtype: 'Ext.data.Store',
 						fields:['type_name','type_id'],
 						data: [
-							{type_name:'不限',type_id:''},
+							{type_name:'请选择',type_id:''},
 							{type_name:'住房',type_id : 'zl_house'},
 							{type_name:'工作',type_id : 'zl_employ'},
 							{type_name:'电话薄',type_id : 'zl_tel'}
@@ -53,12 +53,12 @@ Ext.define('app.view.module.post.PostToolbar', {
 					displayField: 'status_name',
 					valueField:'status_id',
 					flex: 1,
-
+                    value:'',
 					store: {
 						xtype: 'Ext.data.Store',
 						fields:['status_name','status_id'],
 						data: [
-							{status_name:'不限',status_id:''},
+							{status_name:'请选择',status_id:''},
 							{status_name:'正常',status_id : '0'},
 							{status_name:'禁用',status_id : '-1'},
 							{status_name:'待审核',status_id : '-2'}
@@ -77,7 +77,7 @@ Ext.define('app.view.module.post.PostToolbar', {
 					displayField: 'orderBy_name',
 					valueField:'orderField',
 					flex: 1,
-
+                    value:'0',
 					store: {
 						xtype: 'Ext.data.Store',
 						fields:['orderBy_name','orderField'],

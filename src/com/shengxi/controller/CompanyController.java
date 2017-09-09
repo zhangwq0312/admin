@@ -66,9 +66,6 @@ public class CompanyController extends MultiActionController {
 			String company_id = req.getParameter("company_id")==null?"0":req.getParameter("company_id");
 	
 			int status = 0;
-//			if("pass".equals(type)){
-//				status=0;
-//			}else 
 			if("yes".equals(type)){
 				status=0;
 				issuc=companyService.update(company_id,status);
@@ -140,6 +137,7 @@ public class CompanyController extends MultiActionController {
 				json.put("company_create_time", BmUtil.formatDate(company.getCreate_time()));
 				json.put("company_modify_time", BmUtil.formatDate(company.getModify_time()));
 				json.put("company_valid_time", BmUtil.formatDate(company.getValid_time()));
+				json.put("create_operator_id",company.getCreate_operator_id());
 				
 				if(company.getValid_time().getTime()> new Date().getTime()){
 					json.put("isvalid", "0");
@@ -170,10 +168,11 @@ public class CompanyController extends MultiActionController {
 		String msg = "支付失败，请通知技术部门";
 		
 		try {
-			String company_userid = req.getParameter("company_userid")==null?"0":req.getParameter("company_userid");	
+			System.out.println(req.getParameter("company_id"));
+			
 			String company_id = req.getParameter("company_id")==null?"0":req.getParameter("company_id");
-			String company_name = req.getParameter("company_name")==null?"":req.getParameter("company_name");
-
+			System.out.println(company_id);
+			Company company = companyService.findById(company_id);
 			String cutTypeId = req.getParameter("cutTypeId")==null?"":req.getParameter("cutTypeId");
 			String unit_num_str = req.getParameter("unit_num")==null?"":req.getParameter("unit_num");
 			
@@ -181,10 +180,10 @@ public class CompanyController extends MultiActionController {
 			CutType ct = cutTypeService.findById(cutTypeId);
 			int cutmoney = ct.getUnit_price()*unit_num; //该类型该周期的价格*N个周期 
 		   
-			IAccount iaccount = iaccountService.findByTel(company_userid);
+			IAccount iaccount = iaccountService.findByTel(company.getUserid());
 			
 			if(iaccount == null ) {
-				msg="请先给客服充值";
+				msg="请先给客户充值";
 				issuc=false;
 			}else{
 				int money_now = iaccount.getMoney_now()-cutmoney;
@@ -211,7 +210,7 @@ public class CompanyController extends MultiActionController {
 						
 						//商户
 						history.setPost_id(Long.parseLong(company_id));
-						history.setPost_title(company_name);
+						history.setPost_title(company.getName());
 						iaccountHistoryService.save(history);
 						
 						iaccount.setMoney_now(money_now);
@@ -222,11 +221,6 @@ public class CompanyController extends MultiActionController {
 
 				}
 			}
-
-//			if("marriage_valid".equals(ct.getType())){
-//				//婚恋是线下操作，不需要修改表中的记录，只需要在历史表登记有这个支出即可。
-//			}else if("company_valid".equals(ct.getType())){
-//				//商铺需要修改商铺的开始时间和结束时间，而且要通知到用户。需要注意unit_contain_weeks可能需要时间乘起来
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -240,6 +234,54 @@ public class CompanyController extends MultiActionController {
 			rootJson.put("issuc", issuc);
 			rootJson.put("msg", msg);
 			
+			logger.info(rootJson);
+			resp.getWriter().print(rootJson);
+		}
+	}
+	
+	
+	@RequestMapping("save.do")
+	public void save(HttpServletRequest req, HttpServletResponse resp)
+			throws Exception {
+
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		
+		boolean issuc = false;
+		String msg = "添加失败";
+		try {
+			Operator operator = (Operator) req.getSession().getAttribute("user");
+			
+				String company_name = req.getParameter("company_name");
+				String company_userid = req.getParameter("company_userid");
+				User u = userService.findByTel(company_userid);
+				if(u==null){
+					msg = "添加失败，手机号【" + company_name + "】尚未注册。";
+				}else{
+					
+					if(companyService.isExist(company_name)) {
+						msg = "添加失败，商户【" + company_name + "】已经存在。";
+					} else {
+						Company c = new Company();
+						c.setName(company_name);
+						String company_leixing = req.getParameter("company_leixing");
+						String company_short_name = req.getParameter("company_short_name");
+						issuc = companyService.createCompany(company_userid,company_userid,company_leixing,company_name,company_short_name,operator);
+					}
+					
+				}
+				
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (issuc) {
+				msg = "添加成功";
+			}
+			JSONObject rootJson = new JSONObject();
+			rootJson.put("success", true);
+			rootJson.put("issuc", issuc);
+			rootJson.put("msg", msg);
+
 			logger.info(rootJson);
 			resp.getWriter().print(rootJson);
 		}

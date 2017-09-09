@@ -93,7 +93,15 @@ Ext.define('app.view.main.Main', {
 		if(s.get('cutTypeStore') == null) {
 			s.set('cutTypeStore', Ext.create('app.store.CutTypeStore'));
 		};
-
+		if(s.get('companyTypeStore') == null) {
+			s.set('companyTypeStore', Ext.create('app.store.CompanyTypeStore'));
+		};
+		if(s.get('marriageImgStatusStore') == null) {
+			s.set('marriageImgStatusStore', Ext.create('app.store.MarriageImgStatusStore'));
+		};
+		if(s.get('identityStatusStore') == null) {
+			s.set('identityStatusStore', Ext.create('app.store.IdentityStatusStore'));
+		};
     },
     
     listeners: {

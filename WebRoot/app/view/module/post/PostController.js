@@ -138,7 +138,7 @@ Ext.define('app.view.module.post.PostController', {
 		s.filterBy(function(record){  
 			return record.raw.status > -1&&record.raw.type=='post_flush';  
 		});  
-		s.reload();
+		//s.reload();
 	
 	   	var win = this.lookupReference('post_paywindow');
     	

@@ -13,6 +13,9 @@ Ext.define('app.view.main.MainController', {
 		'app.view.module.cuttype.CutType',
 		'app.view.module.post.Post',
 		'app.view.module.company.Company',
+		'app.view.module.marriage.Marriage',
+		'app.view.module.advert.Advert',
+		'app.view.module.msg.Msg',
 	],
 
     alias: 'controller.main',
@@ -90,5 +93,6 @@ Ext.define('app.view.main.MainController', {
     
     onUnloginFailure: function() {
     	Ext.getBody().unmask();
-    }
+    },
+    
 });

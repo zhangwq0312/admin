@@ -30,16 +30,28 @@ public class StatusController extends MultiActionController {
 	@Qualifier("statusService")
 	private StatusService statusService;
 
+	@RequestMapping("query_for.do")
+	public void queryOperatorStatus(HttpServletRequest req, HttpServletResponse resp)
+			throws IOException {
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		String q = req.getParameter("q");
+		JSONArray rootArr = findAll(q);
 
-	public JSONArray findAll(String table_name, String field_name, String exceptValues) {
+		JSONObject root = new JSONObject();
+		root.put("data", rootArr);
+		resp.getWriter().print(root);
+	}
+	
+	private JSONArray findAll(String table_name) {
 
 		JSONArray rootArr = new JSONArray();
 
 		try {
 			List<Status> list = null;
 
-			if(!BmUtil.isEmpty(table_name) && !BmUtil.isEmpty(field_name)) {
-				list = statusService.findAll(table_name, field_name, exceptValues);
+			if(!BmUtil.isEmpty(table_name)) {
+				list = statusService.findStatus(table_name);
 			}
 
 			if(list == null) {
@@ -48,7 +60,7 @@ public class StatusController extends MultiActionController {
 
 			JSONObject colJson = null;
 			colJson = new JSONObject();
-			colJson.put("s_id", InitManager.Defaut_Unselected_ID);
+			colJson.put("s_id", "");
 			colJson.put("s_name", "请选择");
 			rootArr.add(colJson);
 
@@ -67,18 +79,5 @@ public class StatusController extends MultiActionController {
 		}
 
 		return rootArr;
-	}
-
-	@RequestMapping("query_for.do")
-	public void queryOperatorStatus(HttpServletRequest req, HttpServletResponse resp)
-			throws IOException {
-		logger.info("--:");
-		resp.setContentType("application/json; charset=UTF-8");
-		String q = req.getParameter("q");
-		JSONArray rootArr = findAll(q, "STATUS", null);
-
-		JSONObject root = new JSONObject();
-		root.put("data", rootArr);
-		resp.getWriter().print(root);
 	}
 }

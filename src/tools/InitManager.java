@@ -44,13 +44,6 @@ public class InitManager {
 	public void setRootLocalPath(String rootLocalPath) {
 		this.rootLocalPath = rootLocalPath;
 	}
-	// 参数取值有效
-	public static boolean isValidValue(String value) {
-		return StringUtils.isEmpty(value)
-				|| "-1".equals(value.trim())
-				|| String.valueOf(InitManager.Defaut_Unselected_ID).equals(
-						value.trim()) ? false : true;
-	}
 
 	public static String getWebRoot() {
 		return ContextLoader.getCurrentWebApplicationContext()

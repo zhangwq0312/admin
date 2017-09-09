@@ -50,13 +50,18 @@ Ext.define('app.view.module.company.Company', {
 	
 	columns: [{
 		locked: true,
-		header: '申请人',
-		dataIndex: 'user_name',
-		flex: 1
+		header: '商户ID',
+		dataIndex: 'company_id',
+		width: 50
 	},{
 		locked: true,
 		header: '申请人电话',
 		dataIndex: 'company_userid',
+		flex: 1
+	},{
+		locked: true,
+		header: '申请人',
+		dataIndex: 'user_name',
 		flex: 1
 	}, {
 		locked: true,
@@ -119,7 +124,8 @@ Ext.define('app.view.module.company.Company', {
 	},{
 		header: '类型',
 		dataIndex: 'company_leixing',
-		width: 80
+		width: 80,
+		renderer: 'parseCompanyTypeV',
 	},{
 		header: '联系电话',
 		dataIndex: 'company_tel',
@@ -148,8 +154,17 @@ Ext.define('app.view.module.company.Company', {
 		header: '修改时间',
 		dataIndex: 'company_modify_time',
 		align: 'center',
-		width: 136
+		width: 136,
+	},{
+		header: '创建人ID',
+		dataIndex: 'create_operator_id',
+		width: 80,
 	}],
  
+     tbar: [{
+    	text: '添加',
+    	iconCls: 'add',
+    	handler: 'onAddBtn'
+    }],
 	iconCls: 'icon-grid',
 });

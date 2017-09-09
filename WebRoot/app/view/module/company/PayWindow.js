@@ -34,19 +34,19 @@ Ext.define('app.view.module.company.PayWindow', {
 		items: [{
 			name: 'company_userid',
 			fieldLabel: '申请人电话',
-			readOnly: true
+			disabled: true
 		}, {
 			name: 'user_name',
 			fieldLabel: '申请人',
-			readOnly: true
+			disabled: true
 		},{
 			fieldLabel: '商户ID',
 			name: 'company_id',
-			hidden:true,
+			readOnly: true,
 		},{
 			name: 'company_name',
 			fieldLabel: '商户名称',
-			readOnly: true,
+			disabled: true,
 		},  {
 			xtype: 'combobox',
 			name: 'cutTypeId',

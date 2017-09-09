@@ -1,6 +1,5 @@
 package com.shengxi.controller;
 
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +20,6 @@ import com.shengxi.service.IAccountHistoryService;
 import com.shengxi.service.IAccountService;
 import com.shengxi.service.UserService;
 import com.shengxi.showmodel.MoneyUser;
-import com.shengxi.showmodel.PostUser;
 
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
@@ -53,9 +51,6 @@ public class UserController extends MultiActionController {
 
 		logger.info("--:");
 		resp.setContentType("application/json; charset=UTF-8");
-		
-		boolean issuc = false;
-		String msg = "修改失败";
 		
 		JSONArray root = new JSONArray();
 		try {
@@ -105,7 +100,6 @@ public class UserController extends MultiActionController {
 					root.add(json);
 				}
 			}
-			issuc=true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
