@@ -24,12 +24,14 @@ Ext.define('app.view.module.msg.Msg', {
 		var mainViewModel = this.up('app-main').getViewModel();
 		this.getController().mainViewModel = mainViewModel;
 		
-		if(mainViewModel.get('msgStatusStore') == null) {
-			mainViewModel.set('msgStatusStore', Ext.create('app.store.MsgStatusStore'));
-		};
 
-		var store = Ext.create('app.store.MsgStore');
-		
+
+		var store = Ext.create('app.store.MsgStore', {
+            
+		});
+		store.proxy.extraParams.status =0;
+        store.load();
+        
 		var pageSize = store.getPageSize();
 		Ext.apply(this, {
             store: store,
@@ -77,6 +79,17 @@ Ext.define('app.view.module.msg.Msg', {
 		dataIndex: 'status',
         renderer: 'parseStatusV',
 		width: 60
+	},{
+        locked: true,
+        xtype: 'actioncolumn',
+        width: 50,
+        sortable: false,
+        menuDisabled: true,//这一列的最上面“下拉三角”设置为true将不再显示。
+        align: 'center',
+		header: '编辑',
+        items: [{
+            iconCls: 'edit',
+            handler: 'onModify'}]
 	},{
 		header: '发言内容',
 		dataIndex: 'description',

@@ -77,48 +77,39 @@ public class MsgController extends MultiActionController {
 	}
 	
 
-//	@RequestMapping("update.do")
-//	public void update(HttpServletRequest req, HttpServletResponse resp)
-//			throws Exception {
-//
-//		logger.info("--:");
-//		resp.setContentType("application/json; charset=UTF-8");
-//		
-//		boolean issuc = false;
-//		String msg = "修改失败";
-//		try {
-//			String m_id= req.getParameter("m_id");
-//			String m_education= req.getParameter("m_education");
-//			String m_job= req.getParameter("m_job");
-//			String m_address= req.getParameter("m_address");
-//			String m_message= req.getParameter("m_message");
-//			String m_identity= req.getParameter("m_identity")==""?"-1":req.getParameter("m_identity");
-//			String m_photo= req.getParameter("m_photo")==""?"2":req.getParameter("m_photo");
-//			
-//			Msg bean = service.findById(m_id);
-//			bean.setAddress(m_address);
-//			bean.setEducation(m_education);
-//			bean.setJob(m_job);
-//			bean.setMessage(m_message);
-//			bean.setModify_time(new Date());
-//			bean.setIdentity(Integer.parseInt(m_identity));
-//			bean.setPhoto(Integer.parseInt(m_photo));
-//			
-//			issuc = service.update(bean);
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		} finally {
-//			if (issuc) {
-//				msg = "修改成功";
-//			}
-//			JSONObject rootJson = new JSONObject();
-//			rootJson.put("success", true);
-//			rootJson.put("issuc", issuc);
-//			rootJson.put("msg", msg);
-//
-//			logger.info(rootJson);
-//			resp.getWriter().print(rootJson);
-//		}
-//	}
+	@RequestMapping("update.do")
+	public void update(HttpServletRequest req, HttpServletResponse resp)
+			throws Exception {
+
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		
+		boolean issuc = false;
+		String msg = "修改失败";
+		try {
+			String m_id= req.getParameter("m_id");
+			String status= req.getParameter("status")==null?"0":req.getParameter("status");
+			String reply= req.getParameter("reply");
+
+			Msg bean = dao.findById(m_id);
+			bean.setStatus(Integer.parseInt(status));
+			bean.setReply(reply);
+		
+			issuc = dao.update(bean);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (issuc) {
+				msg = "修改成功";
+			}
+			JSONObject rootJson = new JSONObject();
+			rootJson.put("success", true);
+			rootJson.put("issuc", issuc);
+			rootJson.put("msg", msg);
+
+			logger.info(rootJson);
+			resp.getWriter().print(rootJson);
+		}
+	}
 	
 }

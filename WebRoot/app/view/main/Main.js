@@ -102,6 +102,11 @@ Ext.define('app.view.main.Main', {
 		if(s.get('identityStatusStore') == null) {
 			s.set('identityStatusStore', Ext.create('app.store.IdentityStatusStore'));
 		};
+        //下面的store挪到这里，可以在点开“留言管理”的时候就看到“状态”。
+		if(s.get('msgStatusStore') == null) {
+			s.set('msgStatusStore', Ext.create('app.store.MsgStatusStore'));
+		}; 
+        
     },
     
     listeners: {

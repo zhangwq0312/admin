@@ -23,6 +23,7 @@ Ext.define('app.view.module.msg.Toolbar', {
 					displayField: 's_name',
 					valueField:'s_id',
 					width: 200,
+                    value:'0',
 					bind: {
 						store: '{msgStatusStore}',
 					},

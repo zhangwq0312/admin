@@ -92,13 +92,13 @@ Ext.define('app.view.module.user.User', {
 		width: 80
 	},{
         xtype: 'actioncolumn',
+		header: '历史记录',
         width: 100,
         sortable: false,
         menuDisabled: true,
         align: 'center',
         items: [{
         	iconCls: 'edit',
-        	tooltip: '明细',
             handler: 'queryAddCut'
         }]
     },{

@@ -28,7 +28,7 @@ public class MsgDao extends BaseDaoImpl<Msg, String>  {
 			where += " and person like '%" + username + "%' ";
 		}
 		
-		String sql = " select  * from t_leave_msg where type='leave_msg_sys' and  " + where;
+		String sql = " select  * from t_leave_msg where type='leave_msg_sys'   " + where;
 
 		sql = sql + " order by create_time desc ";
 

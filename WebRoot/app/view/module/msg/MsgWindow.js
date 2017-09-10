@@ -16,7 +16,6 @@ Ext.define('app.view.module.msg.MsgWindow', {
 	autoShow: true,
 	width: 420,
 	scrollable: true,
-	title: '新建类型',
 	glyph: 0xf007,
 	initComponent: function() {
 		this.maxHeight = Ext.getBody().getHeight() - 20;
@@ -32,36 +31,52 @@ Ext.define('app.view.module.msg.MsgWindow', {
 	    },
 	    defaultType: 'textfield',
 		items: [{
-			name: 'o_id',
+			name: 'm_id',
 			hidden: true,
-			value: '-1'
 		},{
-			name: 'msg_userid',
-			allowBlank: false,
-			fieldLabel: '*申请人电话',
-			emptyText: ''
+			fieldLabel: '*开始时间',
+			name: 'create_time',
+			emptyText: '',
+            readOnly:true,
 		},{
-			xtype: 'combobox',
-			name: 'msg_leixing',
+			fieldLabel: '*联系电话',
+			name: 'from_tel',
+			emptyText: '',
+            readOnly:true,
+		},{
+			fieldLabel: '*联系人',
+			name: 'person',
+			emptyText: '',
+            readOnly:true,
+		},{
+			fieldLabel: '*QQ',
+			name: 'qq',
+			emptyText: '',
+            readOnly:true,
+		},{
+			fieldLabel: '*发言内容',
+			name: 'description',
+            anchor    : '100%',
+            xtype     : 'textareafield',
+            grow      : true,
+            readOnly:true,
+		},{
+            xtype: 'combobox',
+			fieldLabel: '*状态',
+			name: 'status',
+            value:'',
 			allowBlank: false,
-			editable: false,
 			displayField: 's_name',
 			valueField:'s_id',
-			flex: 1,
-			bind: {
-				store: '{msgTypeStore}'
-			},
-			fieldLabel: '*类型',
-		}, {
-			name: 'msg_name',
-			allowBlank: false,
-			fieldLabel: '*商铺名称',
-			emptyText: ''
-		},  {
-			name: 'msg_short_name',
-			allowBlank: false,
-			fieldLabel: '*短名称',
-			emptyText: ''
+            bind:{
+                store:'{msgStatusStore}',
+            },
+		},{
+			fieldLabel: '*回应客户',
+			name: 'reply',
+            anchor    : '100%',
+            xtype     : 'textareafield',
+            grow      : true,
 		}]
 	}],
 	buttonAlign: 'center',

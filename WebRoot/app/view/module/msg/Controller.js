@@ -7,6 +7,42 @@ Ext.define('app.view.module.msg.Controller', {
     mainViewModel: null,
     alias: 'controller.msg',
 
+	parseStatusV: function(v) {
+    	var str = '';
+    	if(this.mainViewModel != null && this.mainViewModel.get('msgStatusStore') != null) {
+    		str = this.mainViewModel.parseValue(v, 'msgStatusStore', 's_id', 's_name');
+    	}
+    	return str;
+    },
+
+  	onSearchReset: function () {
+		var panel = this.getView();
+		panel.query("textfield[name=tel]")[0].setValue("");
+		panel.query("textfield[name=username]")[0].setValue("");
+		panel.query("combo[name=status]")[0].setValue("");
+	},
+	search: function () {
+		var panel = this.getView();
+    	var store = this.getView().getStore();
+    	store.proxy.extraParams.tel = panel.query("textfield[name=tel]")[0].getValue();
+    	store.proxy.extraParams.username = panel.query("textfield[name=username]")[0].getValue();
+    	store.proxy.extraParams.status = panel.query("combo[name=status]")[0].getValue();
+		store.load();
+	},
+    onModify: function(grid, row, col, item, e, record) {
+    	var win = this.lookupReference('msg_window');
+    	
+    	if (!win) {
+            win = Ext.create('app.view.module.msg.MsgWindow', {
+        
+            });
+            this.getView().add(win);
+        }
+        
+    	win.setTitle('来自：' + record.raw.from_tel);
+    	win.down('form').loadRecord(record);
+    	win.show();
+    },
     onSubmit: function() {
     	var win = this.lookupReference('msg_window');
 		this.submitCommon(win);
@@ -42,28 +78,4 @@ Ext.define('app.view.module.msg.Controller', {
     	};
 
 	},
-	
-	parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('msgStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'msgStatusStore', 's_id', 's_name');
-    	}
-    	return str;
-    },
-
-  	onSearchReset: function () {
-		var panel = this.getView();
-		panel.query("textfield[name=tel]")[0].setValue("");
-		panel.query("textfield[name=username]")[0].setValue("");
-		panel.query("combo[name=status]")[0].setValue("");
-	},
-	search: function () {
-		var panel = this.getView();
-    	var store = this.getView().getStore();
-    	store.proxy.extraParams.tel = panel.query("textfield[name=tel]")[0].getValue();
-    	store.proxy.extraParams.username = panel.query("textfield[name=username]")[0].getValue();
-    	store.proxy.extraParams.status = panel.query("combo[name=status]")[0].getValue();
-		store.load();
-	},
-
 });
