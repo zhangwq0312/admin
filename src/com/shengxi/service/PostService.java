@@ -20,8 +20,8 @@ public class PostService {
 		return dao.update(id,status,post_table);
 	}
 
-	public List<PostUser> findAll(String orderby,String tel, String title, String type,String status, int firstResult, int maxResults) {
-		return dao.findAll(orderby,tel, title, type,status,firstResult, maxResults);
+	public List<PostUser> findAll(String orderby,String tel, String post_tel,String title, String type,String status, int firstResult, int maxResults) {
+		return dao.findAll(orderby,tel, post_tel, title, type,status,firstResult, maxResults);
 	}
 
 	public boolean updatePublishDate(int fullWeeks, String post_table, String post_id) {
@@ -30,6 +30,10 @@ public class PostService {
 	
 	public int ifAutoFlushing(String post_table, String post_id) {
 		return  dao.ifAutoFlushing(post_table,post_id);
+	}
+
+	public int ifExistValidBM(String post_table, String post_id) {
+		return  dao.ifExistValidBM(post_table,post_id);
 	}
 
 }

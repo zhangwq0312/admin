@@ -1,5 +1,5 @@
 Ext.define('app.view.module.operator.OperatorController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
@@ -8,45 +8,24 @@ Ext.define('app.view.module.operator.OperatorController', {
     alias: 'controller.operator',
     
     onAddBtn: function() {
-    	var win = this.lookupReference('operator_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.operator.OperatorWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-        }
-    	
-    	win.setTitle('添加');
-    	win.down('form').reset();
-    	
-    	win.show();
+        var window= 'operator_window';
+        var windowfile='app.view.module.operator.OperatorWindow';
+        this.openAddWindow(window,windowfile);
     },
     
-    onModify: function(grid, row, col, item, e, record) {
+    onModify: function(view,rowIndex,colIndex,item,e,record) {
     	
     	if(!this.getViewModel().isAdmin()) {
     		return;
     	}
     	
-    	var win = this.lookupReference('operator_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.operator.OperatorWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-
-    	win.setTitle('修改：' + record.raw.name);
-    	
     	var arr = record.raw.role_names.split(',');
     	record.raw.role_names = arr.join('\n');
     	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
+        var window= 'operator_window';
+        var windowfile='app.view.module.operator.OperatorWindow';
+        var title='修改：' + record.raw.name;
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile,title);
     },
     
     onModifyPsd: function(grid, row, col, item, e, record) {
@@ -141,47 +120,18 @@ Ext.define('app.view.module.operator.OperatorController', {
     },
     
     onSubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('operator_window');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	
-    	var url = 'operator/update.do';
-    	if(values.o_id === "-1") {
-    		url = 'operator/save.do';
-    	}
-    	
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
+        var w='operator_window';
+        var update_url='operator/update.do';
+        var add_url='operator/save.do';
+		this.submitTwoUrlOid(w,update_url,add_url);
     },
     
     mainViewModel: null,
     
     parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('commonStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'commonStatusStore', 's_id', 's_name');
-    	}
-    	return str;
+        var store_name = 'commonStatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
     }
 });

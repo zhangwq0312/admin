@@ -1,5 +1,5 @@
 Ext.define('app.view.module.msg.Controller', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
@@ -7,14 +7,12 @@ Ext.define('app.view.module.msg.Controller', {
     mainViewModel: null,
     alias: 'controller.msg',
 
-	parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('msgStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'msgStatusStore', 's_id', 's_name');
-    	}
-    	return str;
+    onModify: function(view,rowIndex,colIndex,item,e,record) {
+        var title='来自：' + record.raw.from_tel;
+        var window= 'msg_window';
+        var windowfile='app.view.module.msg.MsgWindow';
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile,title);
     },
-
   	onSearchReset: function () {
 		var panel = this.getView();
 		panel.query("textfield[name=tel]")[0].setValue("");
@@ -29,53 +27,15 @@ Ext.define('app.view.module.msg.Controller', {
     	store.proxy.extraParams.status = panel.query("combo[name=status]")[0].getValue();
 		store.load();
 	},
-    onModify: function(grid, row, col, item, e, record) {
-    	var win = this.lookupReference('msg_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.msg.MsgWindow', {
-        
-            });
-            this.getView().add(win);
-        }
-        
-    	win.setTitle('来自：' + record.raw.from_tel);
-    	win.down('form').loadRecord(record);
-    	win.show();
-    },
     onSubmit: function() {
-    	var win = this.lookupReference('msg_window');
-		this.submitCommon(win);
+        var w='msg_window';
+        var url='msg/update.do';
+		this.submitCommon(w,url);
     },
-   submitCommon: function(win) {
-		var grid = this.getView();
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	
-    	var url = 'msg/update.do';
-    	
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	    				grid.getStore().reload();
-	    			}
-					win.unmask();
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-				
-	    	});
-			
-			
-    	};
-
-	},
+	parseStatusV: function(v) {
+        var store_name = 'msgStatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
+    },
 });

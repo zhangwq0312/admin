@@ -66,12 +66,19 @@ public class PostController extends MultiActionController {
 			String post_table = req.getParameter("post_table")==null?"":req.getParameter("post_table");
 	
 			int status = 0;
-			if("pass".equals(type)){
+			if("pass".equals(type)||"yes".equals(type)){
+				
 				status=0;
-				issuc=postService.update(post_id,status,post_table);
-			}else if("yes".equals(type)){
-				status=0;
-				issuc=postService.update(post_id,status,post_table);
+				if("zl_tel".equals(post_table)){//只有便民做此检查
+					if(postService.ifExistValidBM(post_table,post_id)==0){
+						issuc=postService.update(post_id,status,post_table);
+					}else{
+						msg="为避免信息重复，目前一个便民电话只能拥有一条便民信息。";
+					}
+				}else{
+					issuc=postService.update(post_id,status,post_table);
+				}
+
 			}else if("no".equals(type)){
 				status=-1;
 				if(postService.ifAutoFlushing(post_table,post_id)!=1){
@@ -106,6 +113,7 @@ public class PostController extends MultiActionController {
 		resp.setContentType("application/json; charset=UTF-8");
 
 		String tel = req.getParameter("tel")==null?"":req.getParameter("tel");
+		String post_tel = req.getParameter("post_tel")==null?"":req.getParameter("post_tel");
 		String title = req.getParameter("title")==null?"":req.getParameter("title");
 		String type = req.getParameter("type")==null?"":req.getParameter("type");
 		String status = req.getParameter("status")==null?"":req.getParameter("status");
@@ -117,7 +125,7 @@ public class PostController extends MultiActionController {
 		
 		JSONArray root = new JSONArray();
 		try {
-			List<PostUser> list = postService.findAll(orderby,tel, title,type,status,firstResult, maxResults);
+			List<PostUser> list = postService.findAll(orderby,tel,post_tel, title,type,status,firstResult, maxResults);
 			for(PostUser post: list) {
 				
 				if(post == null) continue;
@@ -143,7 +151,7 @@ public class PostController extends MultiActionController {
 					post.setPost_status(0);
 				}
 				json.put("post_status", post.getPost_status());
-				
+				json.put("post_tel", post.getPost_tel());	
 				json.put("post_create_time", BmUtil.formatDate(post.getCreate_time()));
 				json.put("post_modify_time", BmUtil.formatDate(post.getModify_time()));
 				json.put("post_build_time", BmUtil.formatDate(post.getBuild_time()));

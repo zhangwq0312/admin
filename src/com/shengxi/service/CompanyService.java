@@ -25,8 +25,8 @@ public class CompanyService {
 		return dao.update(id, status);
 	}
 
-	public List<Company> findAll(String tel, String title, String type, String status, int firstResult, int maxResults) {
-		return dao.findAll(tel, title, type, status, firstResult, maxResults);
+	public List<Company> findAll(String tel, String company_tel,String title, String type, String status, int firstResult, int maxResults) {
+		return dao.findAll(tel,company_tel, title, type, status, firstResult, maxResults);
 	}
 
 	public boolean updateValidDate(int fullWeeks, String company_id) {

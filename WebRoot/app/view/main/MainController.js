@@ -14,8 +14,9 @@ Ext.define('app.view.main.MainController', {
 		'app.view.module.post.Post',
 		'app.view.module.company.Company',
 		'app.view.module.marriage.Marriage',
-		'app.view.module.advert.Advert',
+		//'app.view.module.advert.Advert',
 		'app.view.module.msg.Msg',
+		'app.view.module.coupon.Coupon',
 	],
 
     alias: 'controller.main',

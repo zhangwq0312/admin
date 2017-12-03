@@ -147,7 +147,7 @@ public class RoleController extends MultiActionController {
 			
 			if (BmUtil.isAdminOperator(req)) {
 				Role role = new Role();
-				role.setId(req.getParameter("r_id"));
+				role.setId(req.getParameter("o_id"));
 				updateRole(role, req);
 				if(roleService.isExist(role)) {
 					msg = "角色【"+role.getName()+"】已存在。";

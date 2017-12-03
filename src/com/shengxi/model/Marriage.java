@@ -22,6 +22,7 @@ public class Marriage implements Serializable {
 	private String userid;
 	private String tel;
 	private String fullname;
+	private String email;
 	private String sex;
 	private Date born_time;
 	private String education;
@@ -37,6 +38,12 @@ public class Marriage implements Serializable {
 	private long create_operator_id;
 	
 	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
 	public Date getBorn_time() {
 		return born_time;
 	}

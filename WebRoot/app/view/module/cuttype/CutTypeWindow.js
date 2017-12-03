@@ -38,7 +38,7 @@ Ext.define('app.view.module.cuttype.CutTypeWindow', {
 		}, {
 			name: 'name',
 			allowBlank: false,
-			fieldLabel: '*套餐名称',
+			fieldLabel: '*业务名称',
 			emptyText: '体现:名称、单价、内含数量'
 		}, {
 			xtype: 'combobox',
@@ -52,15 +52,18 @@ Ext.define('app.view.module.cuttype.CutTypeWindow', {
 			bind: {
 				store: '{cutTypeTypeStore}'
 			},
+            listeners: {  
+               select: 'onChangeTypeNumWeekText'
+            },
 			fieldLabel: '*类型'
 		}, {
 			xtype: 'numberfield',
-			value: 0,
-			minValue: 1,
+			value: -1,
+			minValue: 0,
 			name: 'unit_price',
 			allowBlank: false,
-			fieldLabel: '*套餐单价',
-			emptyText: '输入套餐单价'
+			fieldLabel: '*业务单价',
+			emptyText: '输入业务单价'
 		}, {
 			xtype: 'numberfield',
 			value: 0,

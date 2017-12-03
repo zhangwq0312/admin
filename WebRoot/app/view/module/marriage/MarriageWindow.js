@@ -37,8 +37,17 @@ Ext.define('app.view.module.marriage.MarriageWindow', {
 			value: '',
             readOnly:'true',
 		},{
+			name: 'o_id',
+            hidden: true,
+			value: '-1',
+		},{
+			name: 'm_userid',
+			fieldLabel: '*登记人电话',
+            allowBlank: false,
+			value: '',
+		},{
 			name: 'm_tel',
-			fieldLabel: '*电话',
+			fieldLabel: '*约会人电话',
             allowBlank: false,
 			value: '',
 		},{
@@ -49,9 +58,8 @@ Ext.define('app.view.module.marriage.MarriageWindow', {
 		},{
             xtype: 'combobox',
 			name: 'm_sex',
-			fieldLabel: '*性别',
-            value:'',
 			allowBlank: false,
+			fieldLabel: '*性别',
 			displayField: 's_name',
 			valueField:'s_id',
             bind:{
@@ -67,16 +75,20 @@ Ext.define('app.view.module.marriage.MarriageWindow', {
 			fieldLabel: '*出生年份',
 			emptyText: '', 
         },{
+			name: 'm_email',
+			fieldLabel: '邮箱',
+			value: '',
+		},{
 			name: 'm_education',
-			fieldLabel: '*学历',
+			fieldLabel: '学历',
 			emptyText: '',
         },{
 			name: 'm_job',
-			fieldLabel: '*职业',
+			fieldLabel: '职业',
 			emptyText: '',
         },{
 			name: 'm_address',
-			fieldLabel: '*约会地址',
+			fieldLabel: '约会地址',
 			emptyText: '',
         },{
             xtype     : 'textareafield',
@@ -91,7 +103,6 @@ Ext.define('app.view.module.marriage.MarriageWindow', {
 			allowBlank: false,
 			displayField: 's_name',
 			valueField:'s_id',
-            value:'',
             bind:{
                 store:'{identityStatusStore}',
             },
@@ -102,7 +113,6 @@ Ext.define('app.view.module.marriage.MarriageWindow', {
 			allowBlank: false,
 			displayField: 's_name',
 			valueField:'s_id',
-            value:'',
             bind:{
                 store:'{marriageImgStatusStore}',
             },

@@ -23,8 +23,6 @@ Ext.define('app.view.module.msg.Msg', {
 
 		var mainViewModel = this.up('app-main').getViewModel();
 		this.getController().mainViewModel = mainViewModel;
-		
-
 
 		var store = Ext.create('app.store.MsgStore', {
             

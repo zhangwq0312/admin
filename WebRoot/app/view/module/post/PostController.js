@@ -1,5 +1,5 @@
 Ext.define('app.view.module.post.PostController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
@@ -7,13 +7,6 @@ Ext.define('app.view.module.post.PostController', {
     mainViewModel: null,
     alias: 'controller.post',
 	
-	parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('common_shenhe_StatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'common_shenhe_StatusStore', 's_id', 's_name');
-    	}
-    	return str;
-    },
 	OnPostType: function(v) {
     	if(v=="zl_tel"){
 			return "便民";
@@ -29,12 +22,14 @@ Ext.define('app.view.module.post.PostController', {
   	onSearchReset: function () {
 		var panel = this.getView();
 		panel.query("textfield[name=tel]")[0].setValue("");
+		panel.query("textfield[name=post_tel]")[0].setValue("");
 		panel.query("textfield[name=title]")[0].setValue("");
 		panel.query("combo[name=status]")[0].setValue("");
 		panel.query("combo[name=type]")[0].setValue("");
 		
     	var viewModel = this.getView().getViewModel();
     	viewModel.set('search_tel', '');
+    	viewModel.set('search_post_tel', '');
     	viewModel.set('search_title', '');
     	viewModel.set('search_status', '');
     	viewModel.set('search_type', '');
@@ -43,6 +38,7 @@ Ext.define('app.view.module.post.PostController', {
     	var store = this.getView().getStore();
     	var viewModel = this.getView().getViewModel();
     	store.proxy.extraParams.tel = viewModel.get('search_tel');
+    	store.proxy.extraParams.post_tel = viewModel.get('search_post_tel');
     	store.proxy.extraParams.title = viewModel.get('search_title');
     	store.proxy.extraParams.type = viewModel.get('search_type');
     	store.proxy.extraParams.status = viewModel.get('search_status');
@@ -57,6 +53,11 @@ Ext.define('app.view.module.post.PostController', {
     	var viewModel = this.getView().getViewModel();
     	viewModel.set('search_tel', newValue);
     },
+	onSearchChangePostTel : function(tf, newValue, oldValue, eOpts){
+    	var viewModel = this.getView().getViewModel();
+    	viewModel.set('search_post_tel', newValue);
+    },
+    
 	onSearchChangeTitle : function(tf, newValue, oldValue, eOpts){
     	var viewModel = this.getView().getViewModel();
     	viewModel.set('search_title', newValue);
@@ -138,51 +139,22 @@ Ext.define('app.view.module.post.PostController', {
 		s.filterBy(function(record){  
 			return record.raw.status > -1&&record.raw.type=='post_flush';  
 		});  
-		//s.reload();
 	
-	   	var win = this.lookupReference('post_paywindow');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.post.PayWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
+        var window= 'post_paywindow';
+        var windowfile='app.view.module.post.PayWindow';
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile);
 	},
 	
 	onPaySubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('post_paywindow');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	var url = 'post/paySubmit.do';
-		
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
+        var w='post_paywindow';
+        var url='post/paySubmit.do';
+		this.submitCommon(w,url);
+    },
+    
+	parseStatusV: function(v) {
+        var store_name = 'common_shenhe_StatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
     },
 });

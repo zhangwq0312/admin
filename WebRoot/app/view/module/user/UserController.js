@@ -1,26 +1,12 @@
 Ext.define('app.view.module.user.UserController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
     ],
     mainViewModel: null,
     alias: 'controller.user',
-	
-	parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('commonStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'commonStatusStore', 's_id', 's_name');
-    	}
-    	return str;
-    },
-	parseSexStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('sexStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'sexStatusStore', 's_id', 's_name');
-    	}
-    	return str;
-    },
+
   	//主题搜索重置
   	onSearchReset: function () {
 		var panel = this.getView();
@@ -84,52 +70,28 @@ Ext.define('app.view.module.user.UserController', {
     	win.show();
     },
 
-    onAddMoney: function(grid, row, col, item, e, record) {
-
-    	var win = this.lookupReference('add_money_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.user.AddMoneyWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
+    onAddMoney: function(view,rowIndex,colIndex,item,e,record,window,windowfile) {
+        var window= 'add_money_window';
+        var windowfile='app.view.module.user.AddMoneyWindow';
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile);
     },
 	
     onAddMoneySubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('add_money_window');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	var url = 'user/addMoney.do';
-		
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
+        var w='add_money_window';
+        var url='user/addMoney.do';
+		this.submitCommon(w,url);	
     },
-
+    
+	parseStatusV: function(v) {
+        var store_name = 'commonStatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
+    },
+	parseSexStatusV: function(v) {
+        var store_name = 'sexStatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
+    },
 });

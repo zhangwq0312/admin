@@ -1,5 +1,5 @@
 Ext.define('app.view.module.role.RoleController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
@@ -15,35 +15,21 @@ Ext.define('app.view.module.role.RoleController', {
     },
 
     onAddBtn: function(btn, e) {
-    	var win = this.lookupReference('role_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.role.RoleWindow');
-            this.getView().add(win);
-        }
-    	
-    	win.setTitle('新增');
-    	win.down('form').reset();
-    	
-    	win.show();
+        var window= 'role_window';
+        var windowfile='app.view.module.role.RoleWindow';
+        this.openAddWindow(window,windowfile);
     },
     
-    onModify: function(grid, row, col, item, e, record) {
-    	var win = this.lookupReference('role_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.role.RoleWindow');
-            this.getView().add(win);
-        }
-    	
-    	win.setTitle('修改：' + record.raw.name);
-    	
+    onModify: function(view,rowIndex,colIndex,item,e,record) {
+    
     	var arr = record.raw.module_names.split(',');
     	record.raw.module_names = arr.join('\n');
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
+        /*the next is very import */
+        record.raw.o_id=record.raw.r_id;
+        var window= 'role_window';
+        var windowfile='app.view.module.role.RoleWindow';
+        var title='修改：' + record.raw.name;
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile,title);
     },
 
     onRemove: function(grid, row, col, item, e, record) {
@@ -123,38 +109,10 @@ Ext.define('app.view.module.role.RoleController', {
     },
   
     onSubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('role_window');
-    	var form = win.down('form');
-    	var values = form.getValues();
-        var self = this;
-
-    	var url = 'role/update.do';
-    	if(values.r_id === "-1") {
-    		url = 'role/save.do';
-    	}
-    	
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    			self.refreshBaseStore();
-	    		}
-	    	});
-    	}
+        var w='role_window';
+        var update_url='role/update.do';
+        var add_url='role/save.do';
+		this.submitTwoUrlOid(w,update_url,add_url);
     },
     
     mainViewModel: null

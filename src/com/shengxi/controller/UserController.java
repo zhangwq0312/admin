@@ -134,7 +134,7 @@ public class UserController extends MultiActionController {
 					issuc = iaccountService.update(iaccount);
 				}else{
 					iaccount = new IAccount();
-					iaccount.setId(idStr);
+					
 					iaccount.setUserid(tel);
 					iaccount.setMoney_now(iaccount.getMoney_now()+addmoney);
 					iaccount.setMoney_add(iaccount.getMoney_add()+addmoney);
@@ -147,7 +147,7 @@ public class UserController extends MultiActionController {
 				Operator operator =(Operator) req.getSession().getAttribute("user");
 				history.setOperator_id(operator.getId());
 				history.setUserid(iaccount.getUserid());
-				history.setAccount_id(Long.parseLong(idStr));
+				history.setAccount_id(Long.parseLong(iaccount.getId()));
 				iaccountHistoryService.save(history);
 			}
 

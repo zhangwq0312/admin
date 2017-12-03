@@ -61,9 +61,9 @@ Ext.define('app.view.module.post.Post', {
 		width: 80
 	},{
 		locked: true,
-		header: '用户ID',
+		header: '发帖人ID',
 		dataIndex: 'user_id',
-		width: 80
+		width: 60
 	},{
 		header: '帖子类型',
 		dataIndex: 'post_table',
@@ -89,6 +89,10 @@ Ext.define('app.view.module.post.Post', {
 			}
 		},
 		width: 60
+	},{
+		header: '联系电话',
+		dataIndex: 'post_tel',
+		width: 90
 	},{
 		header: '帖子标题',
 		dataIndex: 'post_title',
@@ -129,9 +133,15 @@ Ext.define('app.view.module.post.Post', {
         xtype: 'actioncolumn',
 		header: '刷新付费',
 		align: 'center',
-		iconCls:'edit',
 		width: 60,
-		handler: 'onPay'
+        items: [{
+        	iconCls:'edit',
+			isDisabled:function(view , rowIndex , colIndex , item, record) {
+				if(record.raw.post_status=="0"){return false;}
+				else {return true;}
+			}, 
+            handler: 'onPay'
+        }],
 	},{
 		xtype: 'datecolumn',
 		format: 'Y-m-d H:i:s',

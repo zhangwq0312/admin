@@ -38,7 +38,7 @@ public class IAccountHistoryDao extends BaseDaoImpl<IAccountHistory, String> imp
 			if("add".equals(type)){
 				sql=sql+ " and money_change>0 ";
 			}else if("cut".equals(type)) {
-				sql=sql+ " and money_change<0 ";
+				sql=sql+ " and money_change<=0 ";
 			}
 			
 			if(firstResult <= InitManager.Defaut_Unselected_ID || maxResults <= InitManager.Defaut_Unselected_ID || maxResults < firstResult) {

@@ -23,14 +23,14 @@ import tools.InitManager;
 public class CompanyDao extends BaseDaoImpl<Company, String> implements IBaseDao<Company, String> {
 
 	@SuppressWarnings("unchecked")
-	public List<Company> findAll(String tel, String title, String type, String status, int firstResult, int maxResults) {
+	public List<Company> findAll(String tel,String company_tel, String title, String type, String status, int firstResult, int maxResults) {
 		String where = " ";
 
 		if ("-99".equals(status)) {
-			where += " and status = 0 and valid_time<now() ";
+			where += " and status = 0 and build_time<now() ";
 		}
 		if ("0".equals(status)) {
-			where += " and status = 0 and valid_time>=now() ";
+			where += " and status = 0 and build_time>=now() ";
 		}
 		if ("-1".equals(status)) {
 			where += " and status = -1";
@@ -38,6 +38,9 @@ public class CompanyDao extends BaseDaoImpl<Company, String> implements IBaseDao
 
 		if (!"".equals(tel)) {
 			where += " and userid ='" + tel + "' ";
+		}
+		if (!"".equals(company_tel)) {
+			where += " and tel ='" + company_tel + "' ";
 		}
 		if (!"".equals(title)) {
 			where += " and (short_name like '%" + title + "%' or name like '%" + title + "%') ";
@@ -67,7 +70,7 @@ public class CompanyDao extends BaseDaoImpl<Company, String> implements IBaseDao
 	}
 
 	public boolean update(String id, int status) {
-		String sql = "update zl_company set status = " + status + " where id = " + id;
+		String sql = "update zl_company set status = " + status + ", modify_time= now()  where id = " + id;
 		int result = getJdbcTemplate().update(sql);
 		return result > 0 ? true : false;
 	}
@@ -77,9 +80,9 @@ public class CompanyDao extends BaseDaoImpl<Company, String> implements IBaseDao
 
 		// 从次日0点到fullweeks月后的0点，当日申请刷新的当天富余时间为赠送的。（所以加了一天）
 		if (isValiding(company_id) == 1) {
-			sql = "update zl_company set valid_time =  DATE_ADD(DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(valid_time,'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'),interval " + fullWeeks + " MONTH),interval 1 DAY),INTERVAL -1 SECOND)   where id = " + company_id;
+			sql = "update zl_company set build_time =  DATE_ADD(DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(build_time,'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'),interval " + fullWeeks + " MONTH),interval 1 DAY),INTERVAL -1 SECOND)   where id = " + company_id;
 		} else {
-			sql = "update zl_company set valid_time =  DATE_ADD(DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(NOW(),'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'),interval " + fullWeeks + " MONTH),interval 1 DAY),INTERVAL -1 SECOND)   where id = " + company_id;
+			sql = "update zl_company set build_time =  DATE_ADD(DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(NOW(),'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'),interval " + fullWeeks + " MONTH),interval 1 DAY),INTERVAL -1 SECOND)   where id = " + company_id;
 		}
 
 		int result = getJdbcTemplate().update(sql);
@@ -87,12 +90,12 @@ public class CompanyDao extends BaseDaoImpl<Company, String> implements IBaseDao
 	}
 
 	public int isValiding(String company_id) {
-		String query = " select  valid_time>now()  from zl_company where id = " + company_id;
+		String query = " select  build_time>now()  from zl_company where id = " + company_id;
 		return getJdbcTemplate().queryForInt(query);
 	}
 
 	public boolean createCompany(String company_userid, String tel, String company_leixing, String company_name, String company_short_name,Operator operator) {
-		final String sql = "insert into zl_company (userid,tel,leixing,name,short_name,create_time,modify_time,valid_time,status,create_operator_id) " + " values ('" + company_userid + "','" + tel + "','" + company_leixing + "','" + company_name + "','"
+		final String sql = "insert into zl_company (userid,tel,leixing,name,short_name,create_time,modify_time,build_time,status,create_operator_id) " + " values ('" + company_userid + "','" + tel + "','" + company_leixing + "','" + company_name + "','"
 				+ company_short_name + "',now(),now(),DATE_ADD(DATE_ADD(str_to_date(DATE_FORMAT(NOW(),'%Y-%m-%d'),'%Y-%m-%d %H:%i:%s'),INTERVAL 1 DAY),INTERVAL -1 SECOND),0,"+operator.getId()+") ";
 		
 		KeyHolder keyHolder = new GeneratedKeyHolder();  

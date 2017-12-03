@@ -59,7 +59,7 @@ Ext.define('app.view.module.company.PayWindow', {
 			bind: {
 				store: '{cutTypeStore}'
 			},
-			fieldLabel: '*套餐名称',
+			fieldLabel: '*业务名称',
 		}, {
 			xtype: 'numberfield',
 			anchor: '100%',
@@ -67,7 +67,7 @@ Ext.define('app.view.module.company.PayWindow', {
 			maxValue: 9999,
 			minValue: 1,
 			name: 'unit_num',
-			fieldLabel: '*套餐份数',
+			fieldLabel: '*业务份数',
 			emptyText: '',
 		},{
 			xtype : 'datefield',

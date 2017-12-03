@@ -49,13 +49,13 @@ Ext.define('app.view.module.cuttype.CutType', {
 		width: 100,
 	},{
 		locked: true,
-		header: '套餐名称',
+		header: '业务名称',
 		dataIndex: 'name',
 		flex: 1,
 		width: 200,
 	}, {
 		locked: true,
-		header: '套餐单价',
+		header: '业务单价',
 		dataIndex: 'unit_price',
 		renderer: 'parseUnit_price',
 		flex: 1,

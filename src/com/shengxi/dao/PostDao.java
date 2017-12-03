@@ -17,7 +17,7 @@ import tools.InitManager;
 public class PostDao extends BaseDaoImpl<User, String> implements  IBaseDao<User, String> {
 
 	@SuppressWarnings("unchecked")
-	public List<PostUser> findAll(String orderby,String tel, String title, String type,String status, int firstResult, int maxResults) {
+	public List<PostUser> findAll(String orderby,String tel,String post_tel, String title, String type,String status, int firstResult, int maxResults) {
 		
 		String order = "";
 		if("0".equals(orderby)){
@@ -32,6 +32,9 @@ public class PostDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 		if(!"".equals(tel)){
 			where += " and userid ='" + tel + "' ";
 		}
+		if(!"".equals(post_tel)){
+			where += " and tel ='" + post_tel + "' ";
+		}
 		if(!"".equals(title)){
 			where += " and title like '%" + title + "%' ";
 		}
@@ -43,17 +46,17 @@ public class PostDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 		
 		if(type!=null && !"".equals(type.trim())){
 			if("zl_house".equals(type)){
-				sql =  " select '"+type+"' post_table,create_time,modify_time,build_time,userid user_tel,status post_status,title post_title, id post_id from zl_house where 1=1 and source!=10 "+where ;
+				sql =  " select '"+type+"' post_table,create_time,modify_time,build_time,userid user_tel,tel post_tel,status post_status,title post_title, id post_id from zl_house where 1=1 and source!=10 "+where ;
 			}else{
-				sql =  " select '"+type+"' post_table,create_time,modify_time,build_time,userid user_tel,status post_status,title post_title, id post_id from zl_employ where 1=1  "+where;
+				sql =  " select '"+type+"' post_table,create_time,modify_time,build_time,userid user_tel,tel post_tel,status post_status,title post_title, id post_id from "+type+" where 1=1  "+where;
 			}
 		}else{
 			sql = " select * from ( ";
-			sql = sql +  " select  'zl_house' post_table,create_time,modify_time,build_time,userid user_tel,status post_status,title post_title, id post_id from zl_house where 1=1 and source!=10 "+where ;
+			sql = sql +  " select  'zl_house' post_table,create_time,modify_time,build_time,userid user_tel,tel post_tel,status post_status,title post_title, id post_id from zl_house where 1=1 and source!=10 "+where ;
 			sql = sql +  " union ";
-			sql = sql +  " select 'zl_employ' post_table,create_time,modify_time,build_time,userid user_tel,status post_status,title post_title, id post_id from zl_employ where 1=1  "+where;
+			sql = sql +  " select 'zl_employ' post_table,create_time,modify_time,build_time,userid user_tel,tel post_tel,status post_status,title post_title, id post_id from zl_employ where 1=1  "+where;
 			sql = sql +  " union  ";
-			sql = sql +  " select 'zl_tel'    post_table,create_time,modify_time,build_time,userid user_tel,status post_status,title post_title, id post_id from zl_tel where 1=1 "+where;
+			sql = sql +  " select 'zl_tel'    post_table,create_time,modify_time,build_time,userid user_tel,tel post_tel,status post_status,title post_title, id post_id from zl_tel where 1=1 "+where;
 			sql = sql +  " ) a ";
 		}
 		
@@ -76,7 +79,7 @@ public class PostDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 	}
 
 	public boolean update(String id, int status,String post_table) {
-		String sql = "update "+ post_table + " set status = " + status + " where id = "+ id;
+		String sql = "update "+ post_table + " set status = " + status + ", modify_time= now() where id = "+ id;
 		int lineNum = getJdbcTemplate().update(sql);
 		if(lineNum>0){
 			return true;
@@ -107,6 +110,11 @@ public class PostDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 			return true;
 		}
 		return false;
+	}
+
+	public int ifExistValidBM(String post_table, String post_id) {
+		String query =  " select  count(*)  from "+ post_table + " where status=0 and tel in (select tel from "+ post_table + " where id = "+ post_id +" )";
+		return  getJdbcTemplate().queryForInt(query);
 	}
 
 }

@@ -52,16 +52,60 @@ Ext.define('app.view.module.marriage.Marriage', {
 		flex: 1,
 	},{
 		locked: true,
-		header: '电话',
+		header: '登记人电话',
+		dataIndex: 'm_userid',
+        width: 100,
+        renderer:'parseTel',  
+	},{
+		locked: true,
+		header: '登记人完整电话',
+		dataIndex: 'm_userid',
+        width: 100,
+        hidden:true,
+	},{
+		locked: true,
+		header: '约会人电话',
 		dataIndex: 'm_tel',
-		flex: 1,
+        width: 100,
         renderer:'parseTel',
+	},{
+		locked: true,
+		header: '约会人完整电话',
+		dataIndex: 'm_tel',
+        width: 100,
+        hidden:true,
 	},{
 		locked: true,
 		header: '姓名',
 		dataIndex: 'm_fullname',
-		flex: 1,
+        width: 80,
         renderer:'parseName',
+	},{
+		locked: true,
+		header: '完整姓名',
+		dataIndex: 'm_fullname',
+        width: 80,
+        hidden:true,
+	},{
+		locked: true,
+		header: '邮箱地址',
+		dataIndex: 'm_email',
+        width: 80,
+        hidden:true,
+	},{
+		locked: true,
+        xtype: 'actioncolumn',
+		header: '状态',
+		align: 'center',
+		getClass:function(v,metadata,r,rowIndex,colIndex,store){
+			if(r.raw.m_status=='-1'){
+				return 'error';
+			}
+			if(r.raw.m_status=='0'){
+				return 'ok';
+			}
+		},
+		width: 60
 	},{
         locked: true,
         xtype: 'actioncolumn',
@@ -113,19 +157,6 @@ Ext.define('app.view.module.marriage.Marriage', {
 		header: '情感寄语',
 		dataIndex: 'm_message',
 		width: 300
-	},{
-        xtype: 'actioncolumn',
-		header: '状态',
-		align: 'center',
-		getClass:function(v,metadata,r,rowIndex,colIndex,store){
-			if(r.raw.m_status=='-1'){
-				return 'error';
-			}
-			if(r.raw.m_status=='0'){
-				return 'ok';
-			}
-		},
-		width: 60
 	},{
         xtype: 'actioncolumn',
 		header: '禁用/生效',

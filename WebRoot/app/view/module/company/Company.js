@@ -118,9 +118,15 @@ Ext.define('app.view.module.company.Company', {
         xtype: 'actioncolumn',
 		header: '续费',
 		align: 'center',
-		iconCls:'edit',
 		width: 60,
-		handler: 'onPay'
+        items: [{
+        	iconCls:'edit',
+			isDisabled:function(view , rowIndex , colIndex , item, record) {
+				if(record.raw.company_status=="0"){return false;}
+				else {return true;}
+			}, 
+            handler: 'onPay'
+        }],
 	},{
 		header: '类型',
 		dataIndex: 'company_leixing',

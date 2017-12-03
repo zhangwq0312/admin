@@ -6,13 +6,21 @@ Ext.define('app.view.module.company.Toolbar', {
 	defaultType: 'textfield',
 		items: [{  	
 					name: 'tel',
-					fieldLabel: '手机',
+					fieldLabel: '申请手机',
 					labelAlign: 'right',
 					flex: 1,
 					listeners: {
 						change: 'onSearchChangeTel'
 					}
-				}, {
+				}, {  	
+					name: 'company_tel',
+					fieldLabel: '联系电话',
+					labelAlign: 'right',
+					flex: 1,
+					listeners: {
+						change: 'onSearchChangeCompanyTel'
+					}
+				},{
 					name: 'title',
 					fieldLabel: '名称关键词',
 					labelAlign: 'right',

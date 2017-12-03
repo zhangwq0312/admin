@@ -116,6 +116,7 @@ public class MarriageController extends MultiActionController {
 				json.put("m_userid", StringTool.null2Empty(e.getUserid()));
 				json.put("m_tel",StringTool.null2Empty(e.getTel()));
 				json.put("m_fullname",StringTool.null2Empty(e.getFullname()));
+				json.put("m_email",StringTool.null2Empty(e.getEmail()));
 				json.put("m_sex",StringTool.null2Empty(e.getSex()));
 				json.put("m_born_time",BmUtil.formatDate(e.getBorn_time()));
 				json.put("m_age",e.getBorn_time()==null?"":getAge(e.getBorn_time()));
@@ -153,7 +154,9 @@ public class MarriageController extends MultiActionController {
 		String msg = "添加失败";
 		try {
 			String m_tel= req.getParameter("m_tel");
+			String m_userid= req.getParameter("m_userid");
 			String m_fullname= req.getParameter("m_fullname");
+			String m_email= req.getParameter("m_email");
 			String m_sex= req.getParameter("m_sex");
 			String m_born_time= req.getParameter("m_born_time");
 			String m_education= req.getParameter("m_education");
@@ -183,8 +186,8 @@ public class MarriageController extends MultiActionController {
 						c.setPhoto(Integer.parseInt(m_photo));
 						c.setSex(m_sex);
 						c.setStatus(0);
-						c.setUserid("0");//目前没有开放由客户来创建婚恋信息
-						
+						c.setUserid(m_userid);
+						c.setEmail(m_email);
 						issuc = service.save(c);
 					}
 					
@@ -217,6 +220,8 @@ public class MarriageController extends MultiActionController {
 		String msg = "修改失败";
 		try {
 			String m_id= req.getParameter("m_id");
+			String m_born_time= req.getParameter("m_born_time");
+			String m_email= req.getParameter("m_email");
 			String m_education= req.getParameter("m_education");
 			String m_job= req.getParameter("m_job");
 			String m_address= req.getParameter("m_address");
@@ -227,12 +232,13 @@ public class MarriageController extends MultiActionController {
 			Marriage bean = service.findById(m_id);
 			bean.setAddress(m_address);
 			bean.setEducation(m_education);
+			bean.setEmail(m_email);
 			bean.setJob(m_job);
 			bean.setMessage(m_message);
 			bean.setModify_time(new Date());
 			bean.setIdentity(Integer.parseInt(m_identity));
 			bean.setPhoto(Integer.parseInt(m_photo));
-			
+			bean.setBorn_time(BmUtil.parseDate(m_born_time+"-01-01 00:00:00"));
 			issuc = service.update(bean);
 		} catch (Exception e) {
 			e.printStackTrace();

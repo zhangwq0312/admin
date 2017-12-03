@@ -67,7 +67,7 @@ public class MarriageDao extends BaseDaoImpl<Marriage, String> implements IBaseD
 	}
 	
 	public boolean update(String id, int status) {
-		String sql = "update zl_marriage set status = " + status + " where id = " + id;
+		String sql = "update zl_marriage set status = " + status + ", modify_time= now() where id = " + id;
 		int result = getJdbcTemplate().update(sql);
 		return result > 0 ? true : false;
 	}

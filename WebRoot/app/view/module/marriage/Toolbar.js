@@ -6,7 +6,7 @@ Ext.define('app.view.module.marriage.Toolbar', {
 	defaultType: 'textfield',
 		items: [{  	
 					name: 'tel',
-					fieldLabel: '手机',
+					fieldLabel: '登记/约会手机',
 					labelAlign: 'right',
 					width:190,
 				}, {

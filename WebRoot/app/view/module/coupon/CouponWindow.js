@@ -1,8 +1,8 @@
-Ext.define('app.view.module.advert.AdvertWindow', {
+Ext.define('app.view.module.coupon.CouponWindow', {
 	extend: 'Ext.window.Window',
-	alias: 'widget.advert_window',
+	alias: 'widget.coupon_window',
 	
-	reference: 'advert_window',
+	reference: 'coupon_window',
 	
 	uses: [
 	   'app.ux.form.MultiTextAreaField'
@@ -36,33 +36,41 @@ Ext.define('app.view.module.advert.AdvertWindow', {
 			hidden: true,
 			value: '-1'
 		},{
-			name: 'advert_userid',
+			name: 'company_userid',
 			allowBlank: false,
-			fieldLabel: '*申请人电话',
+			fieldLabel: '*手机账号',
 			emptyText: ''
 		},{
-			xtype: 'combobox',
-			name: 'advert_leixing',
+			name: 'company_id',
 			allowBlank: false,
-			editable: false,
-			displayField: 's_name',
-			valueField:'s_id',
-			flex: 1,
-			bind: {
-				store: '{advertTypeStore}'
-			},
-			fieldLabel: '*类型',
-		}, {
-			name: 'advert_name',
-			allowBlank: false,
-			fieldLabel: '*商铺名称',
+			fieldLabel: '*商户ID',
 			emptyText: ''
-		},  {
-			name: 'advert_short_name',
+		},{
+			name: 'big',
 			allowBlank: false,
-			fieldLabel: '*短名称',
+			fieldLabel: '*券名',
 			emptyText: ''
-		}]
+		},{
+			name: 'small',
+			allowBlank: false,
+			fieldLabel: '*small',
+			emptyText: ''
+		},{
+			name: 'description',
+			allowBlank: false,
+			fieldLabel: '*description',
+			emptyText: ''
+		},{
+			name: 'total_num',
+			allowBlank: false,
+			fieldLabel: '*总数',
+			emptyText: ''
+		},{
+			name: 'rest_num',
+			allowBlank: false,
+			fieldLabel: '*余数',
+			emptyText: ''
+		},]
 	}],
 	buttonAlign: 'center',
 	buttons: [{
@@ -71,7 +79,7 @@ Ext.define('app.view.module.advert.AdvertWindow', {
 	}, {
 		text: '取消',
 		handler: function(btn) {
-			btn.up('advert_window').hide();
+			btn.up('coupon_window').hide();
 		}
 	}],
 	listeners: {

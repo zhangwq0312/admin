@@ -77,6 +77,16 @@ Ext.define('app.view.module.msg.MsgWindow', {
             anchor    : '100%',
             xtype     : 'textareafield',
             grow      : true,
+		},{
+            xtype:'checkboxgroup',
+            fieldLabel:'是否短信提醒',
+            items:[{
+                xtype: 'fieldset',
+                collapsible: false,
+                border:0,
+                defaultType : 'checkbox',
+                items: [{boxLabel:'是',name:'shortmsg_flag',inputValue:'1',checked:false }]
+            }]
 		}]
 	}],
 	buttonAlign: 'center',

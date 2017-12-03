@@ -1,5 +1,5 @@
 Ext.define('app.view.module.cuttype.CutTypeController', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
 	mainViewModel: null,
     requires: [
@@ -9,46 +9,23 @@ Ext.define('app.view.module.cuttype.CutTypeController', {
     alias: 'controller.cuttype',
     
     onAddBtn: function() {
-    	var win = this.lookupReference('cuttype_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.cuttype.CutTypeWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-        }
-    	
-    	win.setTitle('添加');
-    	win.down('form').reset();
-    	
-    	win.show();
+        var window= 'cuttype_window';
+        var windowfile='app.view.module.cuttype.CutTypeWindow';
+        this.openAddWindow(window,windowfile);
     },
     
-    onModify: function(grid, row, col, item, e, record) {
+    onModify: function(view,rowIndex,colIndex,item,e,record) {
     	if(!this.getViewModel().isAdmin()) {
     		return;
     	}
-    	
-    	var win = this.lookupReference('cuttypeedit_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.cuttype.CutTypeEditWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-		
-    	win.setTitle('修改：' + record.raw.name);
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
+        var window= 'cuttypeedit_window';
+        var windowfile='app.view.module.cuttype.CutTypeEditWindow';
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile);
     },
 	onDelete: function(grid, row, col, item, e, record) {
     	Ext.Msg.show({
 		    title:'删除',
-		    message: '套餐名称：' + record.raw.name,
+		    message: '业务名称：' + record.raw.name,
 		    buttons: Ext.Msg.YESNO,
 		    icon: Ext.Msg.QUESTION,
 		    scope: this,
@@ -84,63 +61,45 @@ Ext.define('app.view.module.cuttype.CutTypeController', {
     },
     
     onSubmit: function() {
-    	var win = this.lookupReference('cuttype_window');
-		this.submitCommon(win);
+        var w='cuttype_window';
+        var update_url='cutType/update.do';
+        var add_url='cutType/save.do';
+		this.submitTwoUrlOid(w,update_url,add_url);
     },
     onEditSubmit: function() {
-    	var win = this.lookupReference('cuttypeedit_window');
-		this.submitCommon(win);
+        var w='cuttypeedit_window';
+        var update_url='cutType/update.do';
+        var add_url='cutType/save.do';
+		this.submitTwoUrlOid(w,update_url,add_url);
     },
-    submitCommon: function(win) {
-		var grid = this.getView();
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	
-    	var url = 'cutType/update.do';
-    	if(values.o_id === "-1") {
-    		url = 'cutType/save.do';
-    	};
-    	
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	    				grid.getStore().reload();
-	    			}
-					win.unmask();
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-				
-	    	});
-			
-			
-    	};
+    onChangeTypeNumWeekText: function (combo,records,eOpts) {
+        var win = this.lookupReference('cuttype_window');
+        var t = win.query("numberfield[name=unit_contain_weeks]")[0];
 
-	},
-    
-    parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('commonStatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'commonStatusStore', 's_id', 's_name');
-    	}
-    	return str;
+        if(records.raw.s_id == "company_valid"){
+           t.setFieldLabel('*月数')
+        } else if(records.raw.s_id == "marriage_valid"){
+           t.setFieldLabel('*次数')
+        } else if(records.raw.s_id == "post_flush"){
+           t.setFieldLabel('*天数')
+        } else {
+           t.setFieldLabel('*内含数量')
+        }
     },
+
 	parseUnit_price: function(v) {
     	return '共'+v+'元';
     },
+    parseStatusV: function(v) {
+        var store_name = 'commonStatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
+    },
 	parseType: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('cutTypeTypeStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'cutTypeTypeStore', 's_id', 's_name');
-    	}
-    	return str;
+        var store_name = 'cutTypeTypeStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
     },
 });

@@ -32,9 +32,9 @@ public class UserDao extends BaseDaoImpl<User, String> implements  IBaseDao<User
 
 		String HQL_FIND_ALL = "select t.*,"
 				+ "i.id i_id,i.modify_time i_modify_time,i.create_time i_create_time, "
-				+ "i.money_now,i.money_add,i.money_cut,i.integral_cut  from t_user t ,i_account i ";
+				+ "ifnull(i.money_now,0) money_now,ifnull(i.money_add,0) money_add,ifnull(i.money_cut,0) money_cut,ifnull(i.integral_cut,0) integral_cut  from t_user t LEFT JOIN i_account i on t.tel=i.userid ";
 		
-		String sql = HQL_FIND_ALL + " where t.tel=i.userid " + where ;
+		String sql = HQL_FIND_ALL + "  where  1=1  " + where ;
 
 		if(firstResult <= InitManager.Defaut_Unselected_ID || maxResults <= InitManager.Defaut_Unselected_ID || maxResults < firstResult) {
 			sql = sql + " order by i.modify_time desc";

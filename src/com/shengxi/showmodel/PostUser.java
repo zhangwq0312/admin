@@ -10,11 +10,19 @@ public class PostUser implements Serializable {
 	private String post_id;//post ID
 	private int    post_status;
 	private String post_title;
+	private String post_tel;
 	
 	private Date create_time; 
 	private Date modify_time;
 	private Date build_time;
 	
+	
+	public String getPost_tel() {
+		return post_tel;
+	}
+	public void setPost_tel(String post_tel) {
+		this.post_tel = post_tel;
+	}
 	public Date getBuild_time() {
 		return build_time;
 	}

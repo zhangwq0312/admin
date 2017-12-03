@@ -103,6 +103,7 @@ public class CompanyController extends MultiActionController {
 		resp.setContentType("application/json; charset=UTF-8");
 
 		String tel = req.getParameter("tel")==null?"":req.getParameter("tel");
+		String company_tel = req.getParameter("company_tel")==null?"":req.getParameter("company_tel");
 		String title = req.getParameter("title")==null?"":req.getParameter("title");
 		String type = req.getParameter("type")==null?"":req.getParameter("type");
 		String status = req.getParameter("status")==null?"":req.getParameter("status");
@@ -112,7 +113,7 @@ public class CompanyController extends MultiActionController {
 		
 		JSONArray root = new JSONArray();
 		try {
-			List<Company> list = companyService.findAll(tel, title,type,status,firstResult, maxResults);
+			List<Company> list = companyService.findAll(tel,company_tel, title,type,status,firstResult, maxResults);
 			for(Company company: list) {
 				
 				if(company == null) continue;
@@ -256,11 +257,11 @@ public class CompanyController extends MultiActionController {
 				String company_userid = req.getParameter("company_userid");
 				User u = userService.findByTel(company_userid);
 				if(u==null){
-					msg = "添加失败，手机号【" + company_name + "】尚未注册。";
+					msg = "添加失败，手机号【" + company_userid + "】尚未注册。";
 				}else{
 					
 					if(companyService.isExist(company_name)) {
-						msg = "添加失败，商户【" + company_name + "】已经存在。";
+						msg = "添加失败，商户名称【" + company_name + "】已经存在。";
 					} else {
 						Company c = new Company();
 						c.setName(company_name);

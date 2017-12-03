@@ -1,5 +1,5 @@
 Ext.define('app.view.module.company.Controller', {
-    extend: 'Ext.app.ViewController',
+    extend: 'app.view.module.Controller',
 
     requires: [
         'Ext.window.Toast'
@@ -8,87 +8,40 @@ Ext.define('app.view.module.company.Controller', {
     alias: 'controller.company',
 	
 	onAddBtn: function() {
-    	var win = this.lookupReference('company_window');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.company.CompanyWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-        }
-    	
-    	win.setTitle('添加');
-    	win.down('form').reset();
-    	
-    	win.show();
+        var window= 'company_window';
+        var windowfile='app.view.module.company.CompanyWindow';
+        this.openAddWindow(window,windowfile);
+    },
+	onPay: function(view,rowIndex,colIndex,item,e,record) {
+	
+	  	var s = this.mainViewModel.get('cutTypeStore');
+		s.clearFilter(); 
+		s.filterBy(function(record){  
+			return record.raw.status > -1&&record.raw.type=='company_valid';  
+		});  
+
+        var window= 'company_paywindow';
+        var windowfile='app.view.module.company.PayWindow';
+        this.openEditWindow(view,rowIndex,colIndex,item,e,record,window,windowfile);
     },
     onSubmit: function() {
-    	var win = this.lookupReference('company_window');
-		this.submitCommon(win);
-    },
-   submitCommon: function(win) {
-		var grid = this.getView();
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	
-    	var url = 'company/update.do';
-    	if(values.o_id === "-1") {
-    		url = 'company/save.do';
-    	};
-    	
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	    				grid.getStore().reload();
-	    			}
-					win.unmask();
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-				
-	    	});
-			
-			
-    	};
-
-	},
-	
-	parseStatusV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('common_shenhe_StatusStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'common_shenhe_StatusStore', 's_id', 's_name');
-    	}
-    	return str;
-    },
-	OnPostType: function(v) {
-    	if(v=="zl_tel"){
-			return "便民";
-		}
-    	if(v=="zl_house"){
-			return "住房";
-		}
-    	if(v=="zl_employ"){
-			return "工作";
-		}
+        var w='company_window';
+        var update_url='company/update.do';
+        var add_url='company/save.do';
+		this.submitTwoUrlOid(w,update_url,add_url);
     },
   	//主题搜索重置
   	onSearchReset: function () {
 		var panel = this.getView();
 		panel.query("textfield[name=tel]")[0].setValue("");
+		panel.query("textfield[name=company_tel]")[0].setValue("");
 		panel.query("textfield[name=title]")[0].setValue("");
 		panel.query("combo[name=status]")[0].setValue("");
 		panel.query("combo[name=type]")[0].setValue("");
 		
     	var viewModel = this.getView().getViewModel();
     	viewModel.set('search_tel', '');
+    	viewModel.set('search_company_tel', '');
     	viewModel.set('search_title', '');
     	viewModel.set('search_status', '');
     	viewModel.set('search_type', '');
@@ -97,6 +50,7 @@ Ext.define('app.view.module.company.Controller', {
     	var store = this.getView().getStore();
     	var viewModel = this.getView().getViewModel();
     	store.proxy.extraParams.tel = viewModel.get('search_tel');
+    	store.proxy.extraParams.company_tel = viewModel.get('search_company_tel');
     	store.proxy.extraParams.title = viewModel.get('search_title');
     	store.proxy.extraParams.type = viewModel.get('search_type');
     	store.proxy.extraParams.status = viewModel.get('search_status');
@@ -104,10 +58,13 @@ Ext.define('app.view.module.company.Controller', {
     	//viewModel.set('c_id', -1);
 	},
 
-
 	onSearchChangeTel : function(tf, newValue, oldValue, eOpts){
     	var viewModel = this.getView().getViewModel();
     	viewModel.set('search_tel', newValue);
+    },
+	onSearchChangeCompanyTel : function(tf, newValue, oldValue, eOpts){
+    	var viewModel = this.getView().getViewModel();
+    	viewModel.set('search_company_tel', newValue);
     },
 	onSearchChangeTitle : function(tf, newValue, oldValue, eOpts){
     	var viewModel = this.getView().getViewModel();
@@ -121,62 +78,13 @@ Ext.define('app.view.module.company.Controller', {
     	var viewModel = this.getView().getViewModel();
 		viewModel.set('search_type', record.raw.s_id);
     },
-	onPay: function(view,rowIndex,colIndex,item,e,record) {
-	
-	  	var s = this.mainViewModel.get('cutTypeStore');
-		s.clearFilter(); 
-		s.filterBy(function(record){  
-			return record.raw.status > -1&&record.raw.type=='company_valid';  
-		});  
-		//s.reload();
-	
-	   	var win = this.lookupReference('company_paywindow');
-    	
-    	if (!win) {
-            win = Ext.create('app.view.module.company.PayWindow', {
-            	viewModel: this.getView().getViewModel()
-            });
-            this.getView().add(win);
-			
-        }
-    	
-    	win.down('form').loadRecord(record);
-    	
-    	win.show();
-    },
-	
+
 	onPaySubmit: function() {
-    	var grid = this.getView();
-    	var win = this.lookupReference('company_paywindow');
-    	var form = win.down('form');
-    	var values = form.getValues();
-    	var url = 'company/paySubmit.do';
-		
-    	if (form.isValid()){
-    		win.mask('正在保存...');
-    		
-	    	form.submit({
-	    		clientValidation: true,
-	    	    url: url,
-	    		params: values,
-	    		submitEmptyText: false,
-	    		success: function(form, action) {
-	    			if(action.result.issuc) {
-	    				form.reset();
-	    				win.hide();
-	//    				win.destroy();
-	    				
-	    				grid.getStore().reload();
-	    			}
-	    			win.unmask();
-	    			
-	    			Ext.Msg.alert('提示', action.result.msg);
-	    		}
-	    	});
-    	}
+        var w='company_paywindow';
+        var url='company/paySubmit.do';
+		this.submitCommon(w,url);
     },
-	
-	
+
 	onNo: function(view,rowIndex,colIndex,item,e,record) {
 		var type='no';
 		var title='禁用';
@@ -230,11 +138,15 @@ Ext.define('app.view.module.company.Controller', {
     },
 	
 	parseCompanyTypeV: function(v) {
-    	var str = '';
-    	if(this.mainViewModel != null && this.mainViewModel.get('companyTypeStore') != null) {
-    		str = this.mainViewModel.parseValue(v, 'companyTypeStore', 's_id', 's_name');
-    	}
-    	return str;
+        var store_name = 'companyTypeStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
     },
-
+	parseStatusV: function(v) {
+        var store_name = 'common_shenhe_StatusStore';
+        var key_name = 's_id';
+        var value_name = 's_name';
+        return this.parseBase(v,store_name,key_name,value_name);
+    },
 });

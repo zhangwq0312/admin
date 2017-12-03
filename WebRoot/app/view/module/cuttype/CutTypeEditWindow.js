@@ -36,7 +36,7 @@ Ext.define('app.view.module.cuttype.CutTypeEditWindow', {
 		}, {
 			name: 'name',
 			allowBlank: false,
-			fieldLabel: '*套餐名称',
+			fieldLabel: '*业务名称',
 			emptyText: '输入名称'
 		}, {
 			xtype: 'combobox',
@@ -55,8 +55,8 @@ Ext.define('app.view.module.cuttype.CutTypeEditWindow', {
 		}, {
 			name: 'unit_price',
 			allowBlank: false,
-			fieldLabel: '*套餐单价',
-			emptyText: '输入套餐单价',
+			fieldLabel: '*业务单价',
+			emptyText: '输入业务单价',
 			disabled:true,
 		},{
 			name: 'unit_contain_weeks',

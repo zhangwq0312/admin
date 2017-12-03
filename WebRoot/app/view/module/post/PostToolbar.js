@@ -6,15 +6,23 @@ Ext.define('app.view.module.post.PostToolbar', {
 	defaultType: 'textfield',
 		items: [{  	
 					name: 'tel',
-					fieldLabel: '手机',
+					fieldLabel: '发帖手机',
 					labelAlign: 'right',
 					flex: 1,
 					listeners: {
 						change: 'onSearchChangeTel'
 					}
+				},{  	
+					name: 'post_tel',
+					fieldLabel: '联系手机',
+					labelAlign: 'right',
+					flex: 1,
+					listeners: {
+						change: 'onSearchChangePostTel'
+					}
 				}, {
 					name: 'title',
-					fieldLabel: '标题关键词',
+					fieldLabel: '标题',
 					labelAlign: 'right',
 					flex: 1,
 					listeners: {
@@ -37,7 +45,7 @@ Ext.define('app.view.module.post.PostToolbar', {
 							{type_name:'请选择',type_id:''},
 							{type_name:'住房',type_id : 'zl_house'},
 							{type_name:'工作',type_id : 'zl_employ'},
-							{type_name:'电话薄',type_id : 'zl_tel'}
+							{type_name:'便民',type_id : 'zl_tel'}
 						]
 					},
 					listeners: {
