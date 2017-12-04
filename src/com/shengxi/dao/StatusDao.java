@@ -14,7 +14,7 @@ public class StatusDao extends BaseDaoImpl<Status, String>  {
 		
 		String where = " table_name='" + table_name +"'";
 		
-		return this.findAll(where, "order by status");
+		return this.findAll(where, "order by id");
 	}
 	
 }

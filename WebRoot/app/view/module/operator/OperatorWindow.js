@@ -54,7 +54,6 @@ Ext.define('app.view.module.operator.OperatorWindow', {
 			valueField:'s_id',
 			queryMode: 'local',
 			flex: 1,
-			value: '1',
 			bind: {
 				store: '{commonStatusStore}'
 			},

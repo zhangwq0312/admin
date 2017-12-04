@@ -31,7 +31,7 @@ Ext.define('app.view.module.role.RoleWindow', {
 	    defaultType: 'textfield',
 		items: [{
 			name: 'o_id',
-			//hidden: true,
+			hidden: true,
 			value: '-1'
 		}, {
 			name: 'name',

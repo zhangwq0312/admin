@@ -36,11 +36,6 @@ Ext.define('app.view.module.coupon.CouponWindow', {
 			hidden: true,
 			value: '-1'
 		},{
-			name: 'company_userid',
-			allowBlank: false,
-			fieldLabel: '*手机账号',
-			emptyText: ''
-		},{
 			name: 'company_id',
 			allowBlank: false,
 			fieldLabel: '*商户ID',
@@ -66,10 +61,58 @@ Ext.define('app.view.module.coupon.CouponWindow', {
 			fieldLabel: '*总数',
 			emptyText: ''
 		},{
+			xtype: 'combobox',
+			name: 'coupon_status',
+			allowBlank: false,
+			editable: false,
+			displayField: 's_name',
+			valueField:'s_id',
+			queryMode: 'local',
+			flex: 1,
+			bind: {
+				store: '{commonStatusStore}'
+			},
+			fieldLabel: '*状态'
+		},{
 			name: 'rest_num',
 			allowBlank: false,
 			fieldLabel: '*余数',
 			emptyText: ''
+		},{
+			xtype : 'datefield',
+			name : 'coupon_create_time',
+			flex : 1,
+			fieldLabel : '创建时间',
+			format : 'Y-m-d H:i:s',
+            readOnly: true,
+		},{
+			xtype : 'datefield',
+			name : 'coupon_start_time',
+			allowBlank : false,
+			flex : 1,
+			fieldLabel : '*生效时间',
+			format : 'Y-m-d H:i:s',
+		},{
+			xtype : 'datefield',
+			name : 'coupon_end_time',
+			allowBlank : false,
+			flex : 1,
+			fieldLabel : '*失效时间',
+			format : 'Y-m-d H:i:s',
+		},{
+			xtype : 'datefield',
+			name : 'coupon_publish_start_time',
+			allowBlank : false,
+			flex : 1,
+			fieldLabel : '*发券起',
+			format : 'Y-m-d H:i:s',
+		},{
+			xtype : 'datefield',
+			name : 'coupon_publish_end_time',
+			allowBlank : false,
+			flex : 1,
+			fieldLabel : '*发券止',
+			format : 'Y-m-d H:i:s',
 		},]
 	}],
 	buttonAlign: 'center',

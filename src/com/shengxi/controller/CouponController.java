@@ -12,13 +12,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.multiaction.MultiActionController;
 
+import com.shengxi.dao.CouponDao;
+import com.shengxi.model.Company;
 import com.shengxi.model.Coupon;
-import com.shengxi.model.CutType;
-import com.shengxi.model.IAccount;
-import com.shengxi.model.IAccountHistory;
 import com.shengxi.model.Operator;
 import com.shengxi.model.User;
-import com.shengxi.service.CouponService;
+import com.shengxi.service.CompanyService;
 import com.shengxi.service.CutTypeService;
 import com.shengxi.service.IAccountHistoryService;
 import com.shengxi.service.IAccountService;
@@ -49,53 +48,13 @@ public class CouponController extends MultiActionController {
 	private CutTypeService cutTypeService;
 	
 	@Autowired
-	@Qualifier("couponService")
-	private CouponService couponService;
+	@Qualifier("couponDao")
+	private CouponDao couponDao;
 	
+	@Autowired
+	@Qualifier("companyService")
+	private CompanyService companyService;
 	
-	
-	@RequestMapping("change.do")
-	public void change(HttpServletRequest req, HttpServletResponse resp) throws Exception {
-		logger.info("--:");
-		resp.setContentType("application/json; charset=UTF-8");
-
-		boolean issuc = false;
-		String msg = "修改失败";
-		try {
-			String type = req.getParameter("type")==null?"":req.getParameter("type");
-			String coupon_id = req.getParameter("coupon_id")==null?"0":req.getParameter("coupon_id");
-	
-			int status = 0;
-			if("yes".equals(type)){
-				status=0;
-				issuc=couponService.update(coupon_id,status);
-			}else if("no".equals(type)){
-				status=-1;
-				if(couponService.isValiding(coupon_id)!=1){
-					issuc=couponService.update(coupon_id,status);
-				}else{
-					msg="该商户正在有效期内，不能由客服禁用，请联系后端工程师处理。";
-				}
-			}
-
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			if (issuc) {
-				msg = "修改成功";
-			}
-			
-			JSONObject rootJson = new JSONObject();
-			rootJson.put("success", true);
-			rootJson.put("issuc", issuc);
-			rootJson.put("msg", msg);
-			
-			logger.info(rootJson);
-			resp.getWriter().print(rootJson);
-		}
-		
-	}
 	@RequestMapping("query.do")
 	public void queryHandler(HttpServletRequest req, HttpServletResponse resp)
 			throws Exception {
@@ -112,7 +71,7 @@ public class CouponController extends MultiActionController {
 		
 		JSONArray root = new JSONArray();
 		try {
-			List<Coupon> list = couponService.findAll(tel,company_name,type,status,firstResult, maxResults);
+			List<Coupon> list = couponDao.findAll(tel,company_name,type,status,firstResult, maxResults);
 			for(Coupon coupon: list) {
 				
 				JSONObject json = new JSONObject();
@@ -171,32 +130,110 @@ public class CouponController extends MultiActionController {
 		boolean issuc = false;
 		String msg = "添加失败";
 		try {
-			Operator operator = (Operator) req.getSession().getAttribute("user");
+//			String o_id = req.getParameter("o_id");
+			String company_id = req.getParameter("company_id");
+			Company company = companyService.findById(company_id);
 			
-				String coupon_name = req.getParameter("coupon_name");
-				String coupon_userid = req.getParameter("coupon_userid");
-				User u = userService.findByTel(coupon_userid);
-				if(u==null){
-					msg = "添加失败，手机号【" + coupon_userid + "】尚未注册。";
-				}else{
-					
-					if(couponService.isExist(coupon_name)) {
-						msg = "添加失败，商户名称【" + coupon_name + "】已经存在。";
-					} else {
-						Coupon c = new Coupon();
-//						c.setName(coupon_name);
-						String coupon_leixing = req.getParameter("coupon_leixing");
-						String coupon_short_name = req.getParameter("coupon_short_name");
-						issuc = couponService.createCoupon(coupon_userid,coupon_userid,coupon_leixing,coupon_name,coupon_short_name,operator);
-					}
-					
-				}
+			String big = req.getParameter("big");
+			String small = req.getParameter("small");
+			String description = req.getParameter("description");
+			String total_num = req.getParameter("total_num");
+			String rest_num = req.getParameter("rest_num");
+			String coupon_status = req.getParameter("coupon_status");
+//			String coupon_create_time = req.getParameter("coupon_create_time");
+			String coupon_start_time = req.getParameter("coupon_start_time");
+			String coupon_end_time = req.getParameter("coupon_end_time");
+			String coupon_publish_start_time = req.getParameter("coupon_publish_start_time");
+			String coupon_publish_end_time = req.getParameter("coupon_publish_end_time");
+			
+			User u = userService.findByTel(company.getUserid());
+			if(u==null){
+				msg = "添加失败，手机号【" + company.getUserid() + "】尚未注册。";
+			}else{
+				Coupon o = new Coupon();
+				o.setCompany_id(Long.parseLong(company_id));
+				o.setCompany_name(company.getName());
+				o.setUserid(company.getUserid());
+//				o.setId(id);
+//				o.setOrderno(orderno);
+				o.setBig(big);
+				o.setSmall(small);
+				o.setDescription(description);
+				o.setTotal_num(Integer.parseInt(total_num));
+				o.setRest_num(Integer.parseInt(rest_num));
+				
+				o.setStatus(Integer.parseInt(coupon_status));
+				
+				o.setCreate_time(new Date());
+				o.setStart_time(BmUtil.parseDate(coupon_start_time));
+				o.setEnd_time(BmUtil.parseDate(coupon_end_time));
+				o.setPublish_start_time(BmUtil.parseDate(coupon_publish_start_time));
+				o.setPublish_end_time(BmUtil.parseDate(coupon_publish_end_time));
+				
+				issuc = couponDao.save(o);
+			}
 				
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			if (issuc) {
 				msg = "添加成功";
+			}
+			JSONObject rootJson = new JSONObject();
+			rootJson.put("success", true);
+			rootJson.put("issuc", issuc);
+			rootJson.put("msg", msg);
+
+			logger.info(rootJson);
+			resp.getWriter().print(rootJson);
+		}
+	}
+	
+	@RequestMapping("update.do")
+	public void update(HttpServletRequest req, HttpServletResponse resp)
+			throws Exception {
+
+		logger.info("--:");
+		resp.setContentType("application/json; charset=UTF-8");
+		
+		boolean issuc = false;
+		String msg = "修改失败";
+		try {
+			String o_id = req.getParameter("o_id");
+			String company_id = req.getParameter("company_id");
+			String big = req.getParameter("big");
+			String small = req.getParameter("small");
+			String description = req.getParameter("description");
+			String total_num = req.getParameter("total_num");
+			String rest_num = req.getParameter("rest_num");
+			String coupon_status = req.getParameter("coupon_status");
+			String coupon_start_time = req.getParameter("coupon_start_time");
+			String coupon_end_time = req.getParameter("coupon_end_time");
+			String coupon_publish_start_time = req.getParameter("coupon_publish_start_time");
+			String coupon_publish_end_time = req.getParameter("coupon_publish_end_time");
+			
+			Coupon o = couponDao.findById(o_id);
+			o.setCompany_id(Long.parseLong(company_id));
+			Company company = companyService.findById(company_id);
+			o.setCompany_name(company.getName());
+			o.setUserid(company.getUserid());
+			o.setBig(big);
+			o.setSmall(small);
+			o.setDescription(description);
+			o.setTotal_num(Integer.parseInt(total_num));
+			o.setRest_num(Integer.parseInt(rest_num));
+			o.setStatus(Integer.parseInt(coupon_status));
+			o.setStart_time(BmUtil.parseDate(coupon_start_time));
+			o.setEnd_time(BmUtil.parseDate(coupon_end_time));
+			o.setPublish_start_time(BmUtil.parseDate(coupon_publish_start_time));
+			o.setPublish_end_time(BmUtil.parseDate(coupon_publish_end_time));
+			
+			issuc = couponDao.update(o);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (issuc) {
+				msg = "修改成功";
 			}
 			JSONObject rootJson = new JSONObject();
 			rootJson.put("success", true);
